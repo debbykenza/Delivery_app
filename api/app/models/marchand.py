@@ -1,0 +1,20 @@
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
+from app.core.database import Base
+import uuid
+
+class Marchand(Base):
+    __tablename__ = "marchands"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    nom = Column(String, nullable=False)
+    adresse = Column(String, nullable=True)
+    contact = Column(String, nullable=False)
+    utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"), unique=True)
+
+    utilisateur = relationship("Utilisateur")
+    
+    commandes = relationship("Commande", back_populates="marchand")
+
+    
