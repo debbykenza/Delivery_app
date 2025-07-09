@@ -9,6 +9,7 @@ from app.routes import auth
 from app.routes import commandes
 from app.routes import cle_apis  
 from app.routes import marchands  
+from app.routes import livreurs  
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -63,6 +64,7 @@ app.include_router(cle_apis.router, tags=["Clés API"])
 app.include_router(commandes.router, tags=["commandes"])
 
 app.include_router(marchands.router, tags=["Marchands"])
+app.include_router(livreurs.router, tags=["Livreurs"])
 #app.include_router(utilisateurs.router, tags=["utilisateurs"])
 
 
