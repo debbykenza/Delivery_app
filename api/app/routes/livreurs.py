@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
 
+from app.schemas.livraison import ProblemeSignalement
 from app.schemas.livreur import LivreurCreate, LivreurRead, LivreurUpdate, StatutLivreurUpdate
+from app.services.livraison import LivraisonService
 from app.services.livreur import LivreurService
 from app.core.database import get_db
 
@@ -11,6 +13,21 @@ router = APIRouter(prefix="/livreurs", tags=["Livreurs"])
 @router.post("/", response_model=LivreurRead, status_code=status.HTTP_201_CREATED)
 def creer_livreur(livreur: LivreurCreate, db: Session = Depends(get_db)):
     return LivreurService.creer_livreur(db, livreur)
+
+@router.patch("/{livreur_id}/modifier", response_model=LivreurRead)
+def modifier_livreur(livreur_id: UUID, update: LivreurUpdate, db: Session = Depends(get_db)):
+    livreur = LivreurService.modifier_livreur(db, livreur_id, update)
+    if not livreur:
+        raise HTTPException(status_code=404, detail="Livreur non trouvé")
+    return livreur
+
+@router.delete("/{livreur_id}")
+def supprimer_livreur(livreur_id: UUID, db: Session = Depends(get_db)):
+    success = LivreurService.supprimer_livreur(db, livreur_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Livreur non trouvé")
+    return {"detail": "Livreur supprimé avec succès"}
+
 
 @router.get("/", response_model=list[LivreurRead])
 def lister_livreurs(db: Session = Depends(get_db)):
@@ -30,18 +47,40 @@ def changer_statut_livreur(livreur_id: UUID, update: StatutLivreurUpdate, db: Se
         raise HTTPException(status_code=404, detail="Livreur non trouvé")
     return livreur
 
-@router.patch("/{livreur_id}/modifier", response_model=LivreurRead)
-def modifier_livreur(livreur_id: UUID, update: LivreurUpdate, db: Session = Depends(get_db)):
-    livreur = LivreurService.modifier_livreur(db, livreur_id, update)
-    if not livreur:
-        raise HTTPException(status_code=404, detail="Livreur non trouvé")
-    return livreur
+
+@router.put("/accepter/{livraison_id}/{livreur_id}")
+def accepter_livraison(livraison_id: UUID, livreur_id: UUID, db: Session = Depends(get_db)):
+    return LivraisonService.accepter_livraison(db, livraison_id, livreur_id)
+
+@router.get("/commandes/{commande_id}")
+def voir_details_commande(commande_id: UUID, db: Session = Depends(get_db)):
+    commande = LivreurService.voir_details_commande(db, commande_id)
+    if not commande:
+        raise HTTPException(status_code=404, detail="Commande non trouvée")
+    return commande
+
+@router.put("/livraisons/{livraison_id}/terminer")
+def terminer_livraison(livraison_id: UUID, db: Session = Depends(get_db)):
+    livraison = LivraisonService.terminer_livraison(db, livraison_id)
+    if not livraison:
+        raise HTTPException(status_code=404, detail="Livraison introuvable")
+    return {"message": "Livraison validée avec succès", "livraison": livraison}
 
 
-@router.delete("/{livreur_id}")
-def supprimer_livreur(livreur_id: UUID, db: Session = Depends(get_db)):
-    success = LivreurService.supprimer_livreur(db, livreur_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Livreur non trouvé")
-    return {"detail": "Livreur supprimé avec succès"}
+@router.put("/annuler/{livraison_id}")
+def annuler_livraison(livraison_id: UUID, db: Session = Depends(get_db)):
+    return LivraisonService.annuler_livraison(db, livraison_id)
 
+@router.put("/signaler-probleme/{livraison_id}")
+def signaler_probleme(livraison_id: UUID, data: ProblemeSignalement, db: Session = Depends(get_db)):
+    return LivraisonService.signaler_probleme(db, livraison_id, data)
+
+
+@router.get("/historique/{livreur_id}")
+def voir_historique_livraisons(livreur_id: UUID, db: Session = Depends(get_db)):
+    return LivraisonService.voir_historique_livraisons(db, livreur_id)
+
+
+# @router.get("/rechercher/")
+# def rechercher_livraisons(mot_cle: str, db: Session = Depends(get_db)):
+#     return LivraisonService.rechercher_livraisons(db, mot_cle)

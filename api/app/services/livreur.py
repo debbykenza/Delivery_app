@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from app.models.commande import Commande
 from app.models.livreur import Livreur as LivreurModel
 from app.schemas.livreur import LivreurCreate, LivreurUpdate, StatutLivreurUpdate
 from uuid import UUID
@@ -33,6 +34,7 @@ class LivreurService:
         return db.query(LivreurModel).all()
 
 
+
     @staticmethod
     def modifier_livreur(db: Session, livreur_id: UUID, update_data: LivreurUpdate) -> LivreurModel:
         livreur = db.query(LivreurModel).filter(LivreurModel.id == livreur_id).first()
@@ -53,3 +55,10 @@ class LivreurService:
         db.delete(livreur)
         db.commit()
         return True
+
+    @staticmethod
+    def voir_details_commande(db: Session, commande_id: UUID):
+        commande = db.query(Commande).filter(Commande.id == commande_id).first()
+        return commande
+    
+    

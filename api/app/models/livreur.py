@@ -15,5 +15,5 @@ class Livreur(Base):
     statut = Column(Enum("disponible", "indisponible", name="statut_livreur"))
     est_disponible = Column(Boolean, default=True)
 
-    # livraisons = relationship("Livraison", back_populates="livreur")
+    livraisons = relationship("Livraison", back_populates="livreur")
     # avis = relationship("Avis", back_populates="livreur")

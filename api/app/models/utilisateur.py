@@ -30,3 +30,4 @@ class Utilisateur(Base):
         return f"<Utilisateur {self.email} - {self.role}>"
     
     cles_api = relationship("CleAPI", back_populates="utilisateur")
+    marchands = relationship("Marchand", back_populates="utilisateur")

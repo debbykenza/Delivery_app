@@ -27,6 +27,7 @@ class Commande(Base):
     # livraison_id = Column(UUID(as_uuid=True), ForeignKey("livraisons.id"), nullable=True)
 
     # Relations
+    livraison = relationship("Livraison", back_populates="commande")
     marchand = relationship("Marchand", back_populates="commandes")
     # client = relationship("Client", back_populates="commandes")
     # livraison = relationship(

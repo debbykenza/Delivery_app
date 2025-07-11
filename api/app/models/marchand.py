@@ -11,7 +11,7 @@ class Marchand(Base):
     nom = Column(String, nullable=False)
     adresse = Column(String, nullable=True)
     contact = Column(String, nullable=False)
-    utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"), unique=True)
+    utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"))
 
     utilisateur = relationship("Utilisateur")
     
