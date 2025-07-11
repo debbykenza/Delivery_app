@@ -16,4 +16,4 @@ class Livreur(Base):
     est_disponible = Column(Boolean, default=True)
 
     livraisons = relationship("Livraison", back_populates="livreur")
-    # avis = relationship("Avis", back_populates="livreur")
+    avis = relationship("Avis", back_populates="livreur")

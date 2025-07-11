@@ -5,12 +5,13 @@ from app.core.database import Base, engine
 from app.models.utilisateur import Utilisateur
 from app.models.commande import Commande
 # from app.startup import create_default_admin
-from app.routes import auth
+from app.routes import auth, clients
 from app.routes import commandes
 from app.routes import cle_apis  
 from app.routes import marchands  
 from app.routes import livreurs  
 from app.routes import livraisons
+from app.routes import avis
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -67,6 +68,8 @@ app.include_router(commandes.router, tags=["commandes"])
 app.include_router(marchands.router, tags=["Marchands"])
 app.include_router(livreurs.router, tags=["Livreurs"])
 app.include_router(livraisons.router, tags=["Livraisons"])
+app.include_router(clients.router, tags=["Clients"])
+app.include_router(avis.router, tags=["Avis"])
 #app.include_router(utilisateurs.router, tags=["utilisateurs"])
 
 

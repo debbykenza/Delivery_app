@@ -168,7 +168,8 @@ class ServiceCommande:
             articles=donnees_commande.details,
             total=total,
             statut=StatutCommande.EN_ATTENTE,
-            marchand_id=donnees_commande.marchand_id
+            marchand_id=donnees_commande.marchand_id,
+            client_id=donnees_commande.client_id
         )
 
 

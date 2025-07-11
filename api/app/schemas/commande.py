@@ -128,30 +128,26 @@ class ChangementStatutCommande(BaseModel):
 
 class CommandeCreate(BaseModel):
     marchand_id: UUID
+    client_id: UUID
     details: dict  # contient les articles, exemple : {"produits": [...]}
     
     class Config:
-            json_schema_extra = {
-                "example": {
-                    "marchand_id": "b5cee64b-24bd-4c26-b0d8-98205879c937",
-                    "details": {
-                        "produits": [
-                            {
-                                "id": 1,
-                                "nom": "T-shirt en coton",
-                                "quantite": 2,
-                                "prix": 29.99
-                            },
-                            {
-                                "id": 2,
-                                "nom": "Casquette",
-                                "quantite": 1,
-                                "prix": 15.50
-                            }
-                        ]
-                    }
+        json_schema_extra = {
+            "example": {
+                "client_id": "abf4c1c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "marchand_id": "b5cee64b-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "details": {
+                    "produits": [
+                        {
+                            "id": 1,
+                            "nom": "T-shirt en coton",
+                            "quantite": 2,
+                            "prix": 29.99
+                        }
+                    ]
                 }
             }
+        }
 class CommandeUpdate(BaseModel):
     statut: Optional[StatutCommande] = None
     details: Optional[dict] = None
@@ -165,5 +161,6 @@ class CommandeRead(BaseModel):
     articles: dict
     created_at: datetime
     marchand_id: UUID 
+    client_id: UUID
     class Config:
         orm_mode = True
