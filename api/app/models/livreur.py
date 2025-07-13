@@ -18,3 +18,4 @@ class Livreur(Base):
     date_creation = Column(DateTime, default=datetime.utcnow)
     livraisons = relationship("Livraison", back_populates="livreur")
     avis = relationship("Avis", back_populates="livreur")
+    positions = relationship("Position", back_populates="livreur")  # dans Livreur

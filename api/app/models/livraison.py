@@ -38,4 +38,4 @@ class Livraison(Base):
     livreur = relationship("Livreur", back_populates="livraisons")
     avis = relationship("Avis", back_populates="livraison")
     paiement = relationship("Paiement", back_populates="livraison")
-
+    positions = relationship("Position", back_populates="livraison")  # dans Livraison

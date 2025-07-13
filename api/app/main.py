@@ -13,6 +13,7 @@ from app.routes import livreurs
 from app.routes import livraisons
 from app.routes import avis
 from app.routes import paiements
+from app.routes import positions
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -69,6 +70,7 @@ app.include_router(commandes.router, tags=["commandes"])
 app.include_router(marchands.router, tags=["Marchands"])
 app.include_router(livreurs.router, tags=["Livreurs"])
 app.include_router(livraisons.router, tags=["Livraisons"])
+app.include_router(positions.router, tags=["Positions"])
 app.include_router(clients.router, tags=["Clients"])
 app.include_router(avis.router, tags=["Avis"])
 app.include_router(paiements.router, tags=["Paiements"])
