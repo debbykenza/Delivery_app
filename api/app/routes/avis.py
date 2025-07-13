@@ -15,7 +15,7 @@ def donner_avis(avis: AvisCreate, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors de l'enregistrement de l'avis : {str(e)}")
 
-@router.delete("/{avis_id}", status_code=204)
+@router.delete("/{avis_id}", status_code=200)
 def supprimer_avis(avis_id: UUID, db: Session = Depends(get_db)):
     """
     Supprime un avis existant.
@@ -24,6 +24,7 @@ def supprimer_avis(avis_id: UUID, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Avis introuvable")
     return  {"message": "L'avis a été supprimé avec succès"}
+
 @router.get("/", response_model=list[AvisRead])
 def lister_avis(db: Session = Depends(get_db)):
     """

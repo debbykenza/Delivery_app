@@ -191,8 +191,8 @@ class ServiceCommande:
         if donnees_maj.details:
             commande.articles = donnees_maj.details
             commande.total = cls.calculer_total(donnees_maj.details.get("produits", []))
-        if donnees_maj.statut:
-            commande.statut = donnees_maj.statut
+        # if donnees_maj.statut:
+        #     commande.statut = donnees_maj.statut
 
         db.commit()
         db.refresh(commande)

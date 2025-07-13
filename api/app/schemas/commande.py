@@ -148,10 +148,27 @@ class CommandeCreate(BaseModel):
                 }
             }
         }
-class CommandeUpdate(BaseModel):
-    statut: Optional[StatutCommande] = None
-    details: Optional[dict] = None
+# class CommandeUpdate(BaseModel):
+#     statut: Optional[StatutCommande] = None
+#     details: Optional[dict] = None
 
+class CommandeUpdate(BaseModel):
+    details: Optional[dict] = None
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "details": {
+                    "produits": [
+                        {
+                            "id": 1,
+                            "nom": "T-shirt en coton",
+                            "quantite": 3,
+                            "prix": 29.99
+                        }
+                    ]
+                }
+            }
+        }
 
 class CommandeRead(BaseModel):
     id: UUID
@@ -160,7 +177,7 @@ class CommandeRead(BaseModel):
     total: float
     articles: dict
     created_at: datetime
-    marchand_id: UUID 
-    client_id: UUID
+    marchand_id: Optional[UUID]
+    client_id: Optional[UUID]
     class Config:
         from_attributes = True

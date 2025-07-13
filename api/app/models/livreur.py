@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Enum, Boolean
+from datetime import datetime
+from sqlalchemy import Column, DateTime, String, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.core.database import Base
@@ -13,7 +14,7 @@ class Livreur(Base):
     contact = Column(String)
     immatriculation = Column(String)
     statut = Column(Enum("disponible", "indisponible", name="statut_livreur"))
-    est_disponible = Column(Boolean, default=True)
-
+    # est_disponible = Column(Boolean, default=True)
+    date_creation = Column(DateTime, default=datetime.utcnow)
     livraisons = relationship("Livraison", back_populates="livreur")
     avis = relationship("Avis", back_populates="livreur")

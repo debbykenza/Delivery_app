@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from uuid import UUID
 from typing import Optional
@@ -13,6 +14,7 @@ class MarchandCreate(MarchandBase):
 
 class MarchandOut(MarchandBase):
     id: UUID
+    date_creation: datetime
 
     class Config:
         orm_mode = True

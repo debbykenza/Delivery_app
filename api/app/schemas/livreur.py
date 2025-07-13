@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -20,7 +21,7 @@ class LivreurBase(BaseModel):
     contact: str
     immatriculation: str
     statut: StatutLivreur = StatutLivreur.disponible
-    est_disponible: bool = True
+    # est_disponible: bool = True
 
 
 class LivreurCreate(LivreurBase):
@@ -29,6 +30,7 @@ class LivreurCreate(LivreurBase):
 
 class LivreurRead(LivreurBase):
     id: UUID
+    date_creation: datetime
 
     class Config:
         orm_mode = True
