@@ -26,6 +26,7 @@ class Livraison(Base):
     livreur_id = Column(UUID(as_uuid=True), ForeignKey("livreurs.id"))
     statut = Column(Enum("en_attente", "acceptee", "annulee", "en_cours", "terminee", name="statut_livraison"))
     #url_suivi = Column(String)
+    # marchand_id = Column(UUID(as_uuid=True), ForeignKey("marchands.id"))
     date_livraison = Column(DateTime, default=datetime.utcnow) 
     probleme = Column(String, nullable=True)
     commande = relationship(
@@ -36,3 +37,5 @@ class Livraison(Base):
 
     livreur = relationship("Livreur", back_populates="livraisons")
     avis = relationship("Avis", back_populates="livraison")
+    paiement = relationship("Paiement", back_populates="livraison")
+

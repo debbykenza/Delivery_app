@@ -19,9 +19,7 @@ class Commande(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = Column(String, unique=True, index=True)
     marchand_id = Column(UUID(as_uuid=True), ForeignKey("marchands.id"))
-    # client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"))
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"))
-
     articles = Column(JSON)
     statut = Column(Enum(StatutCommande), default=StatutCommande.EN_ATTENTE)
     total = Column(Float)

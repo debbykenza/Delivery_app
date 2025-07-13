@@ -163,4 +163,4 @@ class CommandeRead(BaseModel):
     marchand_id: UUID 
     client_id: UUID
     class Config:
-        orm_mode = True
+        from_attributes = True

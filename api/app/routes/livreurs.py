@@ -52,6 +52,14 @@ def changer_statut_livreur(livreur_id: UUID, update: StatutLivreurUpdate, db: Se
 def accepter_livraison(livraison_id: UUID, livreur_id: UUID, db: Session = Depends(get_db)):
     return LivraisonService.accepter_livraison(db, livraison_id, livreur_id)
 
+@router.put("/livraisons/{livraison_id}/demarrer")
+def demarrer_livraison(livraison_id: UUID, db: Session = Depends(get_db)):
+    livraison = LivraisonService.demarrer_livraison(db, livraison_id)
+    if not livraison:
+        raise HTTPException(status_code=404, detail="Livraison introuvable")
+    return {"message": "Livraison démarrée avec succès", "livraison": livraison}
+
+
 @router.get("/commandes/{commande_id}")
 def voir_details_commande(commande_id: UUID, db: Session = Depends(get_db)):
     commande = LivreurService.voir_details_commande(db, commande_id)

@@ -20,7 +20,7 @@ def creer_clients(client: ClientCreate, db: Session = Depends(get_db)):
     return creer_client(db, client)
 
 @router.get("/", response_model=List[ClientOut])
-def lister_clients(db: Session = Depends(get_db)):
+def lister_les_clients(db: Session = Depends(get_db)):
     return lister_clients(db)
 
 @router.get("/{client_id}", response_model=ClientOut)

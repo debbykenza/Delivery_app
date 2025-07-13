@@ -1,6 +1,8 @@
 from app.core.database import get_db
 from app.dependencies.auth import recuperer_utilisateur_courant
+from app.models.livraison import Livraison
 from app.schemas.marchand import MarchandCreate
+from app.schemas.commande import CommandeRead
 from app.models.marchand import Marchand
 from app.models.commande import Commande, StatutCommande
 from sqlalchemy.orm import Session
@@ -86,17 +88,42 @@ def accepter_commande(db: Session, commande_id: UUID):
         }
     raise HTTPException(status_code=404, detail="Commande non trouvée")
 
+# def lancer_livraison(db: Session, commande_id: UUID):
+#     commande = db.query(Commande).filter(Commande.id == commande_id).first()
+#     if commande:
+#         commande.statut = "en_cours"  
+#         db.commit()
+#         db.refresh(commande)
+#         return {
+#             "message": "Livraison lancée avec succès",
+#             "commande": commande
+#         }
+#     raise HTTPException(status_code=404, detail="Commande non trouvée")
 def lancer_livraison(db: Session, commande_id: UUID):
     commande = db.query(Commande).filter(Commande.id == commande_id).first()
-    if commande:
-        commande.statut = "en_cours"  
-        db.commit()
-        db.refresh(commande)
-        return {
-            "message": "Livraison lancée avec succès",
-            "commande": commande
-        }
-    raise HTTPException(status_code=404, detail="Commande non trouvée")
+    if not commande:
+        raise HTTPException(status_code=404, detail="Commande non trouvée")
+
+    # 1. Mettre à jour le statut de la commande
+    commande.statut = "en_cours"
+    db.commit()
+    db.refresh(commande)
+
+    # 2. Créer une livraison liée, sans livreur_id
+    nouvelle_livraison = Livraison(
+        commande_id=commande_id,
+        statut="en_attente",
+        livreur_id=None  # pas encore affecté
+    )
+    db.add(nouvelle_livraison)
+    db.commit()
+    db.refresh(nouvelle_livraison)
+
+    return {
+        "message": "Livraison lancée avec succès",
+        "commande": CommandeRead.from_orm(commande),
+        "livraison": nouvelle_livraison
+    }
 
 def annuler_livraison(db: Session, commande_id: UUID):
     commande = db.query(Commande).filter(Commande.id == commande_id).first()
