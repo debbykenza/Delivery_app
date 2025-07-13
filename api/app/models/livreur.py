@@ -19,3 +19,4 @@ class Livreur(Base):
     livraisons = relationship("Livraison", back_populates="livreur")
     avis = relationship("Avis", back_populates="livreur")
     positions = relationship("Position", back_populates="livreur")  # dans Livreur
+    adresses = relationship("Adresse", back_populates="livreur")

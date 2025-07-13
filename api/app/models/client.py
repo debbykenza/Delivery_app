@@ -22,6 +22,7 @@ class Client(Base):
     commandes = relationship("Commande", back_populates="client")
     avis = relationship("Avis", back_populates="client")
     paiements = relationship("Paiement", back_populates="client")
+    adresses = relationship("Adresse", back_populates="client")
 
 
 

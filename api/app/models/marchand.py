@@ -17,5 +17,6 @@ class Marchand(Base):
     
     utilisateur = relationship("Utilisateur")
     commandes = relationship("Commande", back_populates="marchand")
+    adresses = relationship("Adresse", back_populates="marchand")
 
     
