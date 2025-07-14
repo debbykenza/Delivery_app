@@ -16,6 +16,7 @@ from app.routes import paiements
 from app.routes import positions
 from app.routes import adresses
 from app.routes import abonnements
+from app.routes import notifications
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -85,6 +86,7 @@ app.include_router(clients.router, tags=["Clients"])
 app.include_router(adresses.router, tags=["Adresses"])
 app.include_router(avis.router, tags=["Avis"])
 app.include_router(paiements.router, tags=["Paiements"])
+app.include_router(notifications.router, tags=["Notifications"])
 #app.include_router(utilisateurs.router, tags=["utilisateurs"])
 
 
