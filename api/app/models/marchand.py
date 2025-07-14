@@ -20,6 +20,6 @@ class Marchand(Base):
     adresses = relationship("Adresse", back_populates="marchand")
     requetes_api = relationship("RequeteAPI", back_populates="marchand")
 
-    # abonnement = relationship("Abonnement", back_populates="marchand", uselist=False)
+    abonnement = relationship("Abonnement", back_populates="marchand", uselist=False)
 
     

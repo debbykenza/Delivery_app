@@ -15,6 +15,7 @@ from app.routes import avis
 from app.routes import paiements
 from app.routes import positions
 from app.routes import adresses
+from app.routes import abonnements
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -76,6 +77,7 @@ app.include_router(cle_apis.router, tags=["Clés API"])
 app.include_router(journal_requetes.router, tags=["Journal des Requêtes"])
 app.include_router(commandes.router, tags=["commandes"])
 app.include_router(marchands.router, tags=["Marchands"])
+app.include_router(abonnements.router, tags=["Abonnements"])
 app.include_router(livreurs.router, tags=["Livreurs"])
 app.include_router(livraisons.router, tags=["Livraisons"])
 app.include_router(positions.router, tags=["Positions"])
