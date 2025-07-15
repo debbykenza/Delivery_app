@@ -1,11 +1,15 @@
 from typing import List, Optional
 from uuid import UUID
 from app.models.livraison import Livraison
+from app.models.notification import TypeNotification
 from app.models.paiement import MethodePaiement, Paiement, RecuPar, StatutPaiement
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.schemas.notification import NotificationCreate
 from app.schemas.paiement import PaiementCreate
 from fastapi import Depends, HTTPException
+
+from app.services.notification import creer_notification
 
 class ServicePaiement:
     @staticmethod
@@ -31,6 +35,31 @@ class ServicePaiement:
         db.add(paiement)
         db.commit()
         db.refresh(paiement)
+        
+        notif = NotificationCreate(
+            user_id=paiement.client_id,
+            user_type="client",
+            titre="Paiement enregistré",
+            message=f"Votre paiement de {paiement.montant} a bien été enregistré.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
+        
+        # ✅ Si le paiement est remis au livreur, notifier aussi le marchand
+        if paiement.recu_par == RecuPar.livreur:
+            livraison = paiement.livraison
+            commande = livraison.commande
+            marchand_id = commande.marchand_id if commande else None
+
+            if marchand_id:
+                notif_marchand = NotificationCreate(
+                    user_id=marchand_id,
+                    user_type="marchand",
+                    titre="Paiement remis au livreur",
+                    message=f"Le client a remis un paiement de {paiement.montant} au livreur.",
+                    type=TypeNotification.info
+                )
+                creer_notification(db, notif_marchand)
         return paiement
 
     @staticmethod
@@ -38,6 +67,15 @@ class ServicePaiement:
         paiement = db.query(Paiement).filter(Paiement.id == paiement_id).first()
         if not paiement:
             return False
+        
+        notif = NotificationCreate(
+            user_id=paiement.client_id,
+            user_type="client",
+            titre="Paiement supprimé",
+            message="Un de vos paiements a été supprimé par l’administration.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif)
         db.delete(paiement)
         db.commit()
         return True
@@ -76,6 +114,27 @@ class ServicePaiement:
         paiement.statut_paiement = StatutPaiement.remboursé
         db.commit()
         db.refresh(paiement)
+        
+        # 🔔 Notification client
+        notif_client = NotificationCreate(
+            user_id=paiement.client_id,
+            user_type="client",
+            titre="Paiement remboursé",
+            message=f"Votre paiement de {paiement.montant} a été remboursé.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Notification marchand
+        marchand_id = paiement.livraison.commande.marchand_id
+        notif_marchand = NotificationCreate(
+            user_id=marchand_id,
+            user_type="marchand",
+            titre="Remboursement effectué",
+            message=f"Vous avez effectué un remboursement de {paiement.montant}.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
         return paiement
 
     @staticmethod
@@ -90,4 +149,31 @@ class ServicePaiement:
         paiement.statut_paiement = StatutPaiement.payé
         db.commit()
         db.refresh(paiement)
+        
+        
+        livraison = paiement.livraison
+        commande = livraison.commande
+        marchand_id = commande.marchand_id
+        livreur_id = livraison.livreur_id
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=marchand_id,
+            user_type="marchand",
+            titre="Paiement reçu",
+            message=f"Un paiement de {paiement.montant} vous a été transféré.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Livreur (confirmation de transfert)
+        if livreur_id:
+            notif_livreur = NotificationCreate(
+                user_id=livreur_id,
+                user_type="livreur",
+                titre="Transfert effectué",
+                message=f"Vous avez transféré {paiement.montant} au marchand.",
+                type=TypeNotification.success
+            )
+            creer_notification(db, notif_livreur)
         return paiement

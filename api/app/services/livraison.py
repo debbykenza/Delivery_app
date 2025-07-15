@@ -6,7 +6,10 @@ from fastapi import HTTPException
 from app.models.livraison import Livraison
 from app.models.commande import Commande
 # from app.models.avis import Avis
+from app.models.notification import TypeNotification
 from app.schemas.livraison import LivraisonCreate, LivraisonStatutUpdate, ProblemeSignalement
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
 
 
 class LivraisonService:
@@ -17,6 +20,21 @@ class LivraisonService:
         db.add(livraison)
         db.commit()
         db.refresh(livraison)
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        # Notification au marchand
+        notif = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Nouvelle livraison créée",
+            message="Une nouvelle demande de livraison a été enregistrée.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return livraison
 
     @staticmethod
@@ -32,7 +50,49 @@ class LivraisonService:
         livraison.statut = "acceptee"
         db.commit()
         db.refresh(livraison)
-        return livraison
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        
+        
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Livraison acceptée",
+            message="Un livreur a accepté la livraison.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Livreur assigné",
+            message="Un livreur a accepté la livraison.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Livreur
+        notif_livreur = NotificationCreate(
+            user_id=livreur_id,
+            user_type="livreur",
+            titre="Nouvelle livraison",
+            message="Vous avez accepté une nouvelle livraison.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_livreur)
+
+        # ✅ Retour avec message personnalisé
+        return {
+            "message": "Livraison acceptée avec succès.",
+            "livraison": livraison
+        }
 
     @staticmethod
     def terminer_livraison(db: Session, livraison_id: UUID):
@@ -42,6 +102,42 @@ class LivraisonService:
         livraison.statut = "terminee"
         db.commit()
         db.refresh(livraison)
+        
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Livraison terminée",
+            message="Votre livraison a été finalisée avec succès.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Livraison terminée",
+            message="Une de vos livraisons vient d'être terminée.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Livreur
+        notif_livreur = NotificationCreate(
+            user_id=livraison.livreur_id,
+            user_type="livreur",
+            titre="Livraison finalisée",
+            message="Vous avez terminé une livraison.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_livreur)
         return livraison
 
     @staticmethod
@@ -52,7 +148,47 @@ class LivraisonService:
         livraison.statut = "annulee"
         db.commit()
         db.refresh(livraison)
-        return livraison
+        
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Livraison annulée",
+            message="Votre livraison a été annulée.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Livraison annulée",
+            message="Une de vos livraisons a été annulée.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Livreur
+        if livraison.livreur_id:
+            notif_livreur = NotificationCreate(
+                user_id=livraison.livreur_id,
+                user_type="livreur",
+                titre="Livraison annulée",
+                message="Une livraison à laquelle vous étiez affecté a été annulée.",
+                type=TypeNotification.warning
+            )
+            creer_notification(db, notif_livreur)
+        return {
+            "message": "Livraison a été annulée avec succès.",
+            "livraison": livraison
+        }
 
     @staticmethod
     def voir_historique_livraisons(db: Session, livreur_id: UUID):
@@ -109,6 +245,41 @@ class LivraisonService:
         livraison.statut = "en_cours"
         db.commit()
         db.refresh(livraison)
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+         # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Livraison en cours",
+            message="Votre livraison est actuellement en cours.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Livraison démarrée",
+            message="Une livraison a été démarrée.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Livreur
+        notif_livreur = NotificationCreate(
+            user_id=livraison.livreur_id,
+            user_type="livreur",
+            titre="Livraison en cours",
+            message="Vous avez démarré une livraison.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_livreur)
         return livraison
 
     @staticmethod
@@ -120,13 +291,64 @@ class LivraisonService:
         # livraison.statut = "probleme"
         db.commit()
         db.refresh(livraison)
-        return livraison
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Problème signalé",
+            message="Un problème a été détecté durant votre livraison.",
+            type=TypeNotification.error
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Problème signalé",
+            message="Un problème a été signalé lors de la livraison.",
+            type=TypeNotification.error
+        )
+        creer_notification(db, notif_marchand)
+
+        # 🔔 Livreur
+        if livraison.livreur_id:
+            notif_livreur = NotificationCreate(
+                user_id=livraison.livreur_id,
+                user_type="livreur",
+                titre="Problème signalé",
+                message="Un problème a été signalé sur une livraison que vous effectuez.",
+                type=TypeNotification.error
+            )
+            creer_notification(db, notif_livreur)
+            return {"message": "votre signalement a été pris en compte."}
 
     @staticmethod
     def supprimer_livraison(db: Session, livraison_id: UUID):
         livraison = db.query(Livraison).filter(Livraison.id == livraison_id).first()
         if not livraison:
             raise HTTPException(status_code=404, detail="Livraison introuvable")
+        
+        # ✅ Récupération du marchand via la commande
+        commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande introuvable")
+        
+        notif = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Livraison supprimée",
+            message="Une livraison a été supprimée.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif)
+    
         db.delete(livraison)
         db.commit()
         return {"message": "Livraison supprimée avec succès"}

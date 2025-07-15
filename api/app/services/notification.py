@@ -20,7 +20,7 @@ def lire_notifications(db: Session, user_id: UUID, user_type: str, seulement_non
         Notification.user_type == user_type
     )
 
-    # ➤ Nouveau filtre selon la valeur de seulement_non_lues
+    # ➤ filtre selon la valeur de seulement_non_lues
     query = query.filter(Notification.lu == (not seulement_non_lues))
 
     return query.order_by(Notification.date_envoi.desc()).all()

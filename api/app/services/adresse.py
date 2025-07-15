@@ -1,4 +1,7 @@
 from sqlalchemy.orm import Session
+from app.models.notification import TypeNotification
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
 from geoalchemy2.shape import from_shape
 from sqlalchemy import select, func
 from geoalchemy2.functions import ST_AsGeoJSON
@@ -55,6 +58,24 @@ class ServiceAdresse:
         db.add(adresse)
         db.commit()
         db.refresh(adresse)
+        
+        # ➤ Détermination du propriétaire de l'adresse
+        cible_id = adresse.utilisateur_id or adresse.client_id or adresse.livreur_id or adresse.marchand_id
+        cible_type = (
+            "utilisateur" if adresse.utilisateur_id else
+            "client" if adresse.client_id else
+            "livreur" if adresse.livreur_id else
+            "marchand"
+        )
+
+        notif = NotificationCreate(
+            user_id=cible_id,
+            user_type=cible_type,
+            titre="Nouvelle adresse enregistrée",
+            message=f"Une nouvelle adresse a été enregistrée pour {cible_type}.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
         return adresse
 
     @staticmethod
@@ -79,6 +100,24 @@ class ServiceAdresse:
 
         db.commit()
         db.refresh(adresse)
+        
+        
+        cible_id = adresse.utilisateur_id or adresse.client_id or adresse.livreur_id or adresse.marchand_id
+        cible_type = (
+            "utilisateur" if adresse.utilisateur_id else
+            "client" if adresse.client_id else
+            "livreur" if adresse.livreur_id else
+            "marchand"
+        )
+
+        notif = NotificationCreate(
+            user_id=cible_id,
+            user_type=cible_type,
+            titre="Adresse mise à jour",
+            message="L'adresse associée à votre compte a été mise à jour.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return adresse
 
     @staticmethod
@@ -88,6 +127,23 @@ class ServiceAdresse:
             return False
         db.delete(adresse)
         db.commit()
+        
+        cible_id = adresse.utilisateur_id or adresse.client_id or adresse.livreur_id or adresse.marchand_id
+        cible_type = (
+            "utilisateur" if adresse.utilisateur_id else
+            "client" if adresse.client_id else
+            "livreur" if adresse.livreur_id else
+            "marchand"
+        )
+
+        notif = NotificationCreate(
+            user_id=cible_id,
+            user_type=cible_type,
+            titre="Adresse supprimée",
+            message="Une adresse liée à votre compte a été supprimée.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif)
         return True
 
     @staticmethod

@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
+from app.models.livreur import Livreur
 
 class TypeNotification(str, Enum):
     info = "info"

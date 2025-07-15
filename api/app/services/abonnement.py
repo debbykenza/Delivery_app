@@ -1,5 +1,9 @@
 # services/abonnement.py
 
+from app.schemas.notification import NotificationCreate, TypeNotification
+from app.services.notification import creer_notification
+
+
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from uuid import UUID
@@ -29,6 +33,16 @@ class ServiceAbonnement:
         db.add(abonnement)
         db.commit()
         db.refresh(abonnement)
+        
+        notif = NotificationCreate(
+            user_id=data.marchand_id,
+            user_type="marchand",
+            titre="Nouvel abonnement créé",
+            message=f"Votre abonnement a été créé pour {data.duree_jours} jours.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
+        
         return abonnement
     
     @staticmethod
@@ -76,6 +90,16 @@ class ServiceAbonnement:
 
         db.commit()
         db.refresh(nouvel_abonnement)
+        
+        # Création de la notification
+        notif = NotificationCreate(
+            user_id=marchand_id,
+            user_type="marchand",
+            titre="Abonnement activé",
+            message=f"Votre abonnement a été activé pour 30 jours.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
 
         return nouvel_abonnement
 
@@ -105,6 +129,16 @@ class ServiceAbonnement:
         if abonnement:
             db.delete(abonnement)
             db.commit()
+            
+            
+            notif = NotificationCreate(
+                user_id=abonnement.marchand_id,
+                user_type="marchand",
+                titre="Abonnement supprimé",
+                message=f"Votre abonnement a été supprimé.",
+                type=TypeNotification.warning
+            )
+            creer_notification(db, notif)
             return True
         return False
 
@@ -121,6 +155,15 @@ class ServiceAbonnement:
 
         db.commit()
         db.refresh(abonnement)
+        
+        notif = NotificationCreate(
+            user_id=abonnement.marchand_id,
+            user_type="marchand",
+            titre="Abonnement modifié",
+            message=f"Votre abonnement a été modifié.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return abonnement
 
     # @staticmethod

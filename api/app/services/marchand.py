@@ -1,6 +1,8 @@
 from app.core.database import get_db
 from app.dependencies.auth import recuperer_utilisateur_courant
 from app.models.livraison import Livraison
+from app.models.livreur import Livreur
+from app.models.notification import TypeNotification
 from app.schemas.marchand import MarchandCreate
 from app.schemas.commande import CommandeRead
 from app.models.marchand import Marchand
@@ -8,6 +10,9 @@ from app.models.commande import Commande, StatutCommande
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from uuid import UUID
+
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
 
 def creer_marchand(db: Session, marchand_data: MarchandCreate):
     # Vérifier si un marchand existe déjà pour cet utilisateur
@@ -25,6 +30,15 @@ def creer_marchand(db: Session, marchand_data: MarchandCreate):
     db.add(nouveau_marchand)
     db.commit()
     db.refresh(nouveau_marchand)
+    
+    notif = NotificationCreate(
+        user_id=nouveau_marchand.utilisateur_id,
+        user_type="marchand",
+        titre="Compte marchand créé",
+        message="Votre profil marchand a été créé avec succès.",
+        type=TypeNotification.success
+    )
+    creer_notification(db, notif)
     return nouveau_marchand
 
 def lister_marchands(db: Session):
@@ -48,6 +62,15 @@ def modifier_marchand(db: Session, marchand_id: UUID, marchand_data: MarchandCre
     # On ne modifie pas l'utilisateur associé sauf besoin spécifique
     db.commit()
     db.refresh(marchand)
+    
+    notif = NotificationCreate(
+        user_id=marchand.utilisateur_id,
+        user_type="marchand",
+        titre="Informations modifiées",
+        message="Vos informations ont été mises à jour avec succès.",
+        type=TypeNotification.info
+    )
+    creer_notification(db, notif)
     return marchand
 
 def supprimer_marchand(db: Session, marchand_id: UUID):
@@ -55,6 +78,15 @@ def supprimer_marchand(db: Session, marchand_id: UUID):
     if not marchand:
         raise HTTPException(status_code=404, detail="Marchand non trouvé")
 
+    
+    notif = NotificationCreate(
+        user_id=marchand.utilisateur_id,
+        user_type="marchand",
+        titre="Compte supprimé",
+        message="Votre profil marchand a été supprimé.",
+        type=TypeNotification.warning
+    )
+    creer_notification(db, notif)
     db.delete(marchand)
     db.commit()
     return {"message": "Marchand supprimé avec succès"}
@@ -82,6 +114,26 @@ def accepter_commande(db: Session, commande_id: UUID):
     if commande:
         commande.statut = "validée"
         db.commit()
+        
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Commande acceptée",
+            message="Votre commande a été validée par le marchand.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand.utilisateur_id,
+            user_type="marchand",
+            titre="Commande validée",
+            message="Vous avez validé une commande.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
         return {
             "message": "Commande validée avec succès",
             # commande
@@ -118,6 +170,38 @@ def lancer_livraison(db: Session, commande_id: UUID):
     db.add(nouvelle_livraison)
     db.commit()
     db.refresh(nouvelle_livraison)
+    
+    # 🔔 Client
+    notif_client = NotificationCreate(
+        user_id=commande.client_id,
+        user_type="client",
+        titre="Livraison en cours",
+        message="La livraison de votre commande a été lancée.",
+        type=TypeNotification.info
+    )
+    creer_notification(db, notif_client)
+
+    # 🔔 Marchand
+    notif_marchand = NotificationCreate(
+        user_id=commande.marchand.utilisateur_id,
+        user_type="marchand",
+        titre="Livraison lancée",
+        message="Une nouvelle livraison a été lancée avec succès.",
+        type=TypeNotification.success
+    )
+    creer_notification(db, notif_marchand)
+
+    # 🔔 Tous les livreurs → notification de disponibilité
+    livreurs = db.query(Livreur).all()
+    for livreur in livreurs:
+        notif_livreur = NotificationCreate(
+            user_id=livreur.id,
+            user_type="livreur",
+            titre="Nouvelle livraison disponible",
+            message="Une nouvelle livraison est en attente d’acceptation.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_livreur)
 
     return {
         "message": "Livraison lancée avec succès",
@@ -131,6 +215,26 @@ def annuler_livraison(db: Session, commande_id: UUID):
         commande.statut = "annulée"
         db.commit()
         db.refresh(commande)
+        
+        # 🔔 Client
+        notif_client = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Commande annulée",
+            message="Votre commande a été annulée par le marchand.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif_client)
+
+        # 🔔 Marchand
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand.utilisateur_id,
+            user_type="marchand",
+            titre="Annulation confirmée",
+            message="L’annulation de la commande a bien été prise en compte.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
         return {
             "message": "Commande annulée avec succès",
             "commande": commande

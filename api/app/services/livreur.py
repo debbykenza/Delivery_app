@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
 from app.models.commande import Commande
 from app.models.livreur import Livreur as LivreurModel
+from app.models.notification import TypeNotification
 from app.schemas.livreur import LivreurCreate, LivreurUpdate, StatutLivreurUpdate
 from uuid import UUID
+
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
 
 
 class LivreurService:
@@ -12,6 +16,15 @@ class LivreurService:
         db.add(livreur)
         db.commit()
         db.refresh(livreur)
+        
+        notif = NotificationCreate(
+            user_id=livreur.id,
+            user_type="livreur",
+            titre="Compte livreur créé",
+            message="Un nouveau compte livreur a été enregistré.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
         return livreur
 
     @staticmethod
@@ -27,6 +40,15 @@ class LivreurService:
         livreur.statut = update_data.nouveau_statut
         db.commit()
         db.refresh(livreur)
+        
+        notif = NotificationCreate(
+            user_id=livreur.id,
+            user_type="livreur",
+            titre="Statut mis à jour",
+            message=f"Votre statut est désormais : {livreur.statut}",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return livreur
 
     @staticmethod
@@ -44,6 +66,15 @@ class LivreurService:
             setattr(livreur, key, value)
         db.commit()
         db.refresh(livreur)
+        
+        notif = NotificationCreate(
+            user_id=livreur.id,
+            user_type="livreur",
+            titre="Profil mis à jour",
+            message="Vos informations personnelles ont été modifiées.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return livreur
 
     
@@ -52,6 +83,15 @@ class LivreurService:
         livreur = db.query(LivreurModel).filter(LivreurModel.id == livreur_id).first()
         if not livreur:
             return False
+        
+        notif = NotificationCreate(
+            user_id=livreur.id,
+            user_type="livreur",
+            titre="Compte supprimé",
+            message="Votre compte a été supprimé du système.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif)
         db.delete(livreur)
         db.commit()
         return True

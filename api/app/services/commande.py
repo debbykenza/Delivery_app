@@ -140,6 +140,10 @@ from app.models.commande import Commande, StatutCommande
 from sqlalchemy.orm import Session
 import uuid
 
+from app.models.notification import TypeNotification
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
+
 
 class ServiceCommande:
 
@@ -176,6 +180,24 @@ class ServiceCommande:
         db.add(commande)
         db.commit()
         db.refresh(commande)
+        
+        notif = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Commande créée",
+            message=f"Votre commande {commande.reference} a été enregistrée.",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
+        
+        notif_marchand = NotificationCreate(
+            user_id=commande.marchand_id,
+            user_type="marchand",
+            titre="Nouvelle commande reçue",
+            message=f"Vous avez reçu une nouvelle commande.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif_marchand)
         return commande
 
     @classmethod
@@ -196,6 +218,15 @@ class ServiceCommande:
 
         db.commit()
         db.refresh(commande)
+        
+        notif = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Commande modifiée",
+            message=f"Les détails de votre commande {commande.reference} ont été mis à jour.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return commande
 
     # @classmethod
@@ -229,10 +260,28 @@ class ServiceCommande:
         commande.statut = nouveau_statut
         db.commit()
         db.refresh(commande)
+        
+        notif = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Statut de commande mis à jour",
+            message=f"Votre commande {commande.reference} est maintenant : {commande.statut.value}.",
+            type=TypeNotification.info
+        )
+        creer_notification(db, notif)
         return commande
 
 
     @classmethod
     def supprimer_commande(cls, db: Session, commande: Commande):
+        
+        notif = NotificationCreate(
+            user_id=commande.client_id,
+            user_type="client",
+            titre="Commande supprimée",
+            message=f"Votre commande {commande.reference} a été supprimée.",
+            type=TypeNotification.warning
+        )
+        creer_notification(db, notif)
         db.delete(commande)
         db.commit()
