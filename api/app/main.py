@@ -21,6 +21,7 @@ from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
 from app.routes import journal_requetes
+import json
 
 
 from app.middlewares.journal_requete import JournalRequeteMiddleware
@@ -91,7 +92,32 @@ app.include_router(notifications.router, tags=["Notifications"])
 
 
 
+# def custom_openapi():
+#     if app.openapi_schema:
+#         return app.openapi_schema
+#     openapi_schema = get_openapi(
+#         title="DELIVERY API",
+#         version="1.0.0",
+#         description="API pour la plateforme fournissant une api de gestion de livraison",
+#         routes=app.routes,
+#     )
+#     openapi_schema["openapi"] = "3.0.3"  # <-- force la version 3.0.3
+#     app.openapi_schema = openapi_schema
+#     return app.openapi_schema
 
+
+# ✅ Route pour générer le fichier openapi.json
+# @app.get("/export-openapi")
+# def export_openapi():
+#     openapi_schema = get_openapi(
+#         title="API de Gestion de Livraison",
+#         version="1.0.0",
+#         description="Cette API permet de gérer les livraisons, clients, livreurs, commandes, paiements, etc.",
+#         routes=app.routes,
+#     )
+#     with open("openapi.json", "w") as f:
+#         json.dump(openapi_schema, f, indent=2)
+#     return {"message": "Fichier openapi.json généré avec succès"}
 
 # Ajout du schéma de sécurité dans la doc Swagger
 # def custom_openapi():

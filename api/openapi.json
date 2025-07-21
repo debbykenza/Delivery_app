@@ -1,0 +1,5506 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API de Gestion de Livraison",
+    "description": "Cette API permet de g\u00e9rer les livraisons, clients, livreurs, commandes, paiements, etc.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/inscription": {
+      "post": {
+        "tags": [
+          "auth",
+          "auth"
+        ],
+        "summary": "Inscription Utilisateur",
+        "description": "Endpoint to register a new user.",
+        "operationId": "inscription_utilisateur_auth_inscription_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/connexion": {
+      "post": {
+        "tags": [
+          "auth",
+          "auth"
+        ],
+        "summary": "Connexion Utilisateur",
+        "description": "Endpoint to login a user.",
+        "operationId": "connexion_utilisateur_auth_connexion_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/creer": {
+      "post": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Creer Cle Api",
+        "operationId": "creer_cle_api_cles_api_creer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleAPICreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleAPIResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/liste": {
+      "get": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Lister Cles Api",
+        "operationId": "lister_cles_api_cles_api_liste_get",
+        "parameters": [
+          {
+            "name": "utilisateur_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Utilisateur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CleAPIResponse"
+                  },
+                  "title": "Response Lister Cles Api Cles Api Liste Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/supprimer/{cle_id}": {
+      "delete": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Supprimer Cle Api",
+        "operationId": "supprimer_cle_api_cles_api_supprimer__cle_id__delete",
+        "parameters": [
+          {
+            "name": "cle_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cle Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Supprimer Cle Api Cles Api Supprimer  Cle Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/revocation/{cle_id}": {
+      "put": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Revoquer Cle Api",
+        "operationId": "revoquer_cle_api_cles_api_revocation__cle_id__put",
+        "parameters": [
+          {
+            "name": "cle_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cle Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleAPIResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/nommer/{cle_id}": {
+      "put": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Nommer Cle Api",
+        "operationId": "nommer_cle_api_cles_api_nommer__cle_id__put",
+        "parameters": [
+          {
+            "name": "cle_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cle Id"
+            }
+          },
+          {
+            "name": "nouveau_nom",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Nouveau Nom"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleAPIResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/regenerer/{cle_id}": {
+      "put": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Regenerer Cle Api",
+        "operationId": "regenerer_cle_api_cles_api_regenerer__cle_id__put",
+        "parameters": [
+          {
+            "name": "cle_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cle Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleAPIResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cles-api/statistiques/{utilisateur_id}": {
+      "get": {
+        "tags": [
+          "Cl\u00e9s API",
+          "Cl\u00e9s API"
+        ],
+        "summary": "Consulter Stats Api",
+        "operationId": "consulter_stats_api_cles_api_statistiques__utilisateur_id__get",
+        "parameters": [
+          {
+            "name": "utilisateur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Utilisateur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatistiquesAPIResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Lister Stats Requetes",
+        "operationId": "lister_stats_requetes_stats_requetes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes/jour": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Requetes Dernier Jour",
+        "operationId": "requetes_dernier_jour_stats_requetes_jour_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes/semaine": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Requetes 7 Jours",
+        "operationId": "requetes_7_jours_stats_requetes_semaine_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes/mois": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Requetes 30 Jours",
+        "operationId": "requetes_30_jours_stats_requetes_mois_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes/trimestre": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Requetes 90 Jours",
+        "operationId": "requetes_90_jours_stats_requetes_trimestre_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/requetes/annee": {
+      "get": {
+        "tags": [
+          "Journal des Requ\u00eates",
+          "Journal des Requ\u00eates"
+        ],
+        "summary": "Requetes Annee",
+        "operationId": "requetes_annee_stats_requetes_annee_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/commandes/": {
+      "get": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Lister Commandes",
+        "operationId": "lister_commandes_commandes__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CommandeRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Commandes Commandes  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Creer Commande",
+        "operationId": "creer_commande_commandes__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandeRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/commandes/{commande_id}": {
+      "get": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Obtenir Commande",
+        "operationId": "obtenir_commande_commandes__commande_id__get",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandeRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Modifier Commande",
+        "operationId": "modifier_commande_commandes__commande_id__put",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandeUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandeRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Supprimer Commande",
+        "operationId": "supprimer_commande_commandes__commande_id__delete",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/commandes/{commande_id}/statut": {
+      "patch": {
+        "tags": [
+          "commandes",
+          "commandes"
+        ],
+        "summary": "Changer Statut Commande",
+        "operationId": "changer_statut_commande_commandes__commande_id__statut_patch",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangementStatutCommande"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandeRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/": {
+      "get": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Lister Marchands",
+        "operationId": "lister_marchands_marchands__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MarchandOut"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Marchands Marchands  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Creer Marchand",
+        "operationId": "creer_marchand_marchands__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarchandCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarchandOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/statistiques": {
+      "get": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Voir Statistiques Livraisons Test",
+        "operationId": "voir_statistiques_livraisons_test_marchands_statistiques_get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "UUID du marchand \u00e0 tester",
+              "title": "Marchand Id"
+            },
+            "description": "UUID du marchand \u00e0 tester"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Obtenir Marchand",
+        "operationId": "obtenir_marchand_marchands__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarchandOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/marchands/{marchand_id}": {
+      "put": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Modifier Marchand",
+        "operationId": "modifier_marchand_marchands_marchands__marchand_id__put",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarchandCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Supprimer Marchand",
+        "operationId": "supprimer_marchand_marchands_marchands__marchand_id__delete",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/commandes/{commande_id}/accepter": {
+      "put": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Accepter Commande",
+        "operationId": "accepter_commande_marchands_commandes__commande_id__accepter_put",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/commandes/{commande_id}/livrer": {
+      "put": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Lancer Livraison",
+        "operationId": "lancer_livraison_marchands_commandes__commande_id__livrer_put",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/commandes/{commande_id}/annuler": {
+      "put": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Annuler Livraison",
+        "operationId": "annuler_livraison_marchands_commandes__commande_id__annuler_put",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/commandes/{commande_id}": {
+      "get": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Voir Details Commande",
+        "operationId": "voir_details_commande_marchands_commandes__commande_id__get",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/marchands/{marchand_id}/adresse": {
+      "put": {
+        "tags": [
+          "Marchands",
+          "Marchands"
+        ],
+        "summary": "Modifier Adresse",
+        "operationId": "modifier_adresse_marchands__marchand_id__adresse_put",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          },
+          {
+            "name": "adresse",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Adresse"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/nombre-abonnes": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Obtenir Nombre Abonnes",
+        "operationId": "obtenir_nombre_abonnes_abonnements_nombre_abonnes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/temps-restant/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Obtenir Temps Restant Avant Expiration",
+        "operationId": "obtenir_temps_restant_avant_expiration_abonnements_temps_restant__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/historique/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Obtenir Historique Abonnements",
+        "operationId": "obtenir_historique_abonnements_abonnements_historique__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AbonnementRead"
+                  },
+                  "title": "Response Obtenir Historique Abonnements Abonnements Historique  Marchand Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/souscrire": {
+      "post": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Souscrire Abonnement",
+        "description": "Permet \u00e0 un marchand de souscrire \u00e0 un abonnement standard de 30 jours.",
+        "operationId": "souscrire_abonnement_abonnements_souscrire_post",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          },
+          {
+            "name": "montant",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Montant"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Lister Abonnements",
+        "operationId": "lister_abonnements_abonnements__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AbonnementRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Abonnements Abonnements  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/{abonnement_id}": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Obtenir Abonnement",
+        "operationId": "obtenir_abonnement_abonnements__abonnement_id__get",
+        "parameters": [
+          {
+            "name": "abonnement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Abonnement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbonnementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Modifier Abonnement",
+        "operationId": "modifier_abonnement_abonnements__abonnement_id__put",
+        "parameters": [
+          {
+            "name": "abonnement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Abonnement Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbonnementUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbonnementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Supprimer Abonnement",
+        "operationId": "supprimer_abonnement_abonnements__abonnement_id__delete",
+        "parameters": [
+          {
+            "name": "abonnement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Abonnement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/marchand/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Abonnements Par Marchand",
+        "operationId": "abonnements_par_marchand_abonnements_marchand__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AbonnementRead"
+                  },
+                  "title": "Response Abonnements Par Marchand Abonnements Marchand  Marchand Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abonnements/statut/{statut}": {
+      "get": {
+        "tags": [
+          "Abonnements",
+          "Abonnements"
+        ],
+        "summary": "Abonnements Par Statut",
+        "operationId": "abonnements_par_statut_abonnements_statut__statut__get",
+        "parameters": [
+          {
+            "name": "statut",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Statut"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AbonnementRead"
+                  },
+                  "title": "Response Abonnements Par Statut Abonnements Statut  Statut  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/": {
+      "get": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Lister Livreurs",
+        "operationId": "lister_livreurs_livreurs__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LivreurRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Livreurs Livreurs  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Creer Livreur",
+        "operationId": "creer_livreur_livreurs__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivreurCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivreurRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/{livreur_id}/modifier": {
+      "patch": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Modifier Livreur",
+        "operationId": "modifier_livreur_livreurs__livreur_id__modifier_patch",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivreurUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivreurRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/{livreur_id}": {
+      "delete": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Supprimer Livreur",
+        "operationId": "supprimer_livreur_livreurs__livreur_id__delete",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Obtenir Livreur",
+        "operationId": "obtenir_livreur_livreurs__livreur_id__get",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivreurRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/{livreur_id}/statut": {
+      "patch": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Changer Statut Livreur",
+        "operationId": "changer_statut_livreur_livreurs__livreur_id__statut_patch",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatutLivreurUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivreurRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/accepter/{livraison_id}/{livreur_id}": {
+      "put": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Accepter Livraison",
+        "operationId": "accepter_livraison_livreurs_accepter__livraison_id___livreur_id__put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          },
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/livraisons/{livraison_id}/demarrer": {
+      "put": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Demarrer Livraison",
+        "operationId": "demarrer_livraison_livreurs_livraisons__livraison_id__demarrer_put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/commandes/{commande_id}": {
+      "get": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Voir Details Commande",
+        "operationId": "voir_details_commande_livreurs_commandes__commande_id__get",
+        "parameters": [
+          {
+            "name": "commande_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Commande Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/livraisons/{livraison_id}/terminer": {
+      "put": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Terminer Livraison",
+        "operationId": "terminer_livraison_livreurs_livraisons__livraison_id__terminer_put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/annuler/{livraison_id}": {
+      "put": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Annuler Livraison",
+        "operationId": "annuler_livraison_livreurs_annuler__livraison_id__put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/signaler-probleme/{livraison_id}": {
+      "put": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Signaler Probleme",
+        "operationId": "signaler_probleme_livreurs_signaler_probleme__livraison_id__put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProblemeSignalement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livreurs/historique/{livreur_id}": {
+      "get": {
+        "tags": [
+          "Livreurs",
+          "Livreurs"
+        ],
+        "summary": "Voir Historique Livraisons",
+        "operationId": "voir_historique_livraisons_livreurs_historique__livreur_id__get",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livraisons/creer": {
+      "post": {
+        "tags": [
+          "Livraisons",
+          "Livraisons"
+        ],
+        "summary": "Creer Livraison",
+        "operationId": "creer_livraison_livraisons_creer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivraisonCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livraisons/suivre/{livraison_id}": {
+      "get": {
+        "tags": [
+          "Livraisons",
+          "Livraisons"
+        ],
+        "summary": "Obtenir Livraison",
+        "operationId": "obtenir_livraison_livraisons_suivre__livraison_id__get",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livraisons/supprimer/{livraison_id}": {
+      "delete": {
+        "tags": [
+          "Livraisons",
+          "Livraisons"
+        ],
+        "summary": "Supprimer Livraison",
+        "operationId": "supprimer_livraison_livraisons_supprimer__livraison_id__delete",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livraisons/disponibles": {
+      "get": {
+        "tags": [
+          "Livraisons",
+          "Livraisons"
+        ],
+        "summary": "Livraisons Disponibles",
+        "operationId": "livraisons_disponibles_livraisons_disponibles_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/livraisons/statut/{livraison_id}": {
+      "put": {
+        "tags": [
+          "Livraisons",
+          "Livraisons"
+        ],
+        "summary": "Mettre A Jour Statut",
+        "operationId": "mettre_a_jour_statut_livraisons_statut__livraison_id__put",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LivraisonStatutUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positions/": {
+      "post": {
+        "tags": [
+          "Positions",
+          "Positions"
+        ],
+        "summary": "Enregistrer Position",
+        "operationId": "enregistrer_position_positions__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PositionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positions/livreur/{livreur_id}": {
+      "get": {
+        "tags": [
+          "Positions",
+          "Positions"
+        ],
+        "summary": "Derniere Position",
+        "operationId": "derniere_position_positions_livreur__livreur_id__get",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positions/livraison/{livraison_id}": {
+      "get": {
+        "tags": [
+          "Positions",
+          "Positions"
+        ],
+        "summary": "Positions Par Livraison",
+        "operationId": "positions_par_livraison_positions_livraison__livraison_id__get",
+        "parameters": [
+          {
+            "name": "livraison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livraison Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PositionOut"
+                  },
+                  "title": "Response Positions Par Livraison Positions Livraison  Livraison Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positions/{livreur_id}": {
+      "put": {
+        "tags": [
+          "Positions",
+          "Positions"
+        ],
+        "summary": "Modifier Position",
+        "operationId": "modifier_position_positions__livreur_id__put",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PositionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/positions/{position_id}": {
+      "delete": {
+        "tags": [
+          "Positions",
+          "Positions"
+        ],
+        "summary": "Supprimer Position",
+        "description": "Supprime une position GPS (cas exceptionnel uniquement).",
+        "operationId": "supprimer_position_positions__position_id__delete",
+        "parameters": [
+          {
+            "name": "position_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Position Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients/": {
+      "get": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Lister Les Clients",
+        "operationId": "lister_les_clients_clients__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClientOut"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Les Clients Clients  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Creer Clients",
+        "operationId": "creer_clients_clients__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients/{client_id}": {
+      "get": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Obtenir Client",
+        "operationId": "obtenir_client_clients__client_id__get",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Modifier Clients",
+        "operationId": "modifier_clients_clients__client_id__put",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Supprimer Clients",
+        "operationId": "supprimer_clients_clients__client_id__delete",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients/commande": {
+      "post": {
+        "tags": [
+          "Clients",
+          "Clients"
+        ],
+        "summary": "Creer Commande",
+        "operationId": "creer_commande_clients_commande_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandeRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Lister Adresses",
+        "operationId": "lister_adresses_adresses__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AdresseRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Adresses Adresses  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Creer Adresse",
+        "operationId": "creer_adresse_adresses__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdresseCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/{adresse_id}": {
+      "put": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Modifier Adresse",
+        "operationId": "modifier_adresse_adresses__adresse_id__put",
+        "parameters": [
+          {
+            "name": "adresse_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Adresse Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdresseCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Supprimer Adresse",
+        "operationId": "supprimer_adresse_adresses__adresse_id__delete",
+        "parameters": [
+          {
+            "name": "adresse_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Adresse Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/client/{client_id}": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Lister Adresses Client",
+        "operationId": "lister_adresses_client_adresses_client__client_id__get",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdresseRead"
+                  },
+                  "title": "Response Lister Adresses Client Adresses Client  Client Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/livreur/{livreur_id}": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Lister Adresses Livreur",
+        "operationId": "lister_adresses_livreur_adresses_livreur__livreur_id__get",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdresseRead"
+                  },
+                  "title": "Response Lister Adresses Livreur Adresses Livreur  Livreur Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/marchand/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Lister Adresses Marchand",
+        "operationId": "lister_adresses_marchand_adresses_marchand__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdresseRead"
+                  },
+                  "title": "Response Lister Adresses Marchand Adresses Marchand  Marchand Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/utilisateur/{utilisateur_id}": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Lister Adresses Utilisateur",
+        "operationId": "lister_adresses_utilisateur_adresses_utilisateur__utilisateur_id__get",
+        "parameters": [
+          {
+            "name": "utilisateur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Utilisateur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdresseRead"
+                  },
+                  "title": "Response Lister Adresses Utilisateur Adresses Utilisateur  Utilisateur Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/{adresse_id}/zone/geojson": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Get Zone Geojson",
+        "operationId": "get_zone_geojson_adresses__adresse_id__zone_geojson_get",
+        "parameters": [
+          {
+            "name": "adresse_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Adresse Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adresses/{adresse_id}/point/geojson": {
+      "get": {
+        "tags": [
+          "Adresses",
+          "Adresses"
+        ],
+        "summary": "Get Position Point Geojson",
+        "operationId": "get_position_point_geojson_adresses__adresse_id__point_geojson_get",
+        "parameters": [
+          {
+            "name": "adresse_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Adresse Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avis/": {
+      "get": {
+        "tags": [
+          "Avis",
+          "Avis"
+        ],
+        "summary": "Lister Avis",
+        "description": "Liste tous les avis.",
+        "operationId": "lister_avis_avis__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AvisRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Avis Avis  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Avis",
+          "Avis"
+        ],
+        "summary": "Donner Avis",
+        "operationId": "donner_avis_avis__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvisCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvisRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avis/{avis_id}": {
+      "delete": {
+        "tags": [
+          "Avis",
+          "Avis"
+        ],
+        "summary": "Supprimer Avis",
+        "description": "Supprime un avis existant.",
+        "operationId": "supprimer_avis_avis__avis_id__delete",
+        "parameters": [
+          {
+            "name": "avis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Avis Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avis/livreur/{livreur_id}": {
+      "get": {
+        "tags": [
+          "Avis",
+          "Avis"
+        ],
+        "summary": "Lister Avis Par Livreur",
+        "description": "Liste les avis donn\u00e9s \u00e0 un livreur sp\u00e9cifique.",
+        "operationId": "lister_avis_par_livreur_avis_livreur__livreur_id__get",
+        "parameters": [
+          {
+            "name": "livreur_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Livreur Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvisRead"
+                  },
+                  "title": "Response Lister Avis Par Livreur Avis Livreur  Livreur Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/": {
+      "get": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Lister Paiements",
+        "operationId": "lister_paiements_paiements__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PaiementRead"
+                  },
+                  "type": "array",
+                  "title": "Response Lister Paiements Paiements  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Creer Paiement",
+        "operationId": "creer_paiement_paiements__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaiementCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaiementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/{paiement_id}": {
+      "delete": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Supprimer Paiement",
+        "operationId": "supprimer_paiement_paiements__paiement_id__delete",
+        "parameters": [
+          {
+            "name": "paiement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Paiement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Obtenir Paiement",
+        "operationId": "obtenir_paiement_paiements__paiement_id__get",
+        "parameters": [
+          {
+            "name": "paiement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Paiement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaiementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/client/{client_id}": {
+      "get": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Paiements Par Client",
+        "operationId": "paiements_par_client_paiements_client__client_id__get",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Client Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaiementRead"
+                  },
+                  "title": "Response Paiements Par Client Paiements Client  Client Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/marchand/{marchand_id}": {
+      "get": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Paiements Par Marchand",
+        "operationId": "paiements_par_marchand_paiements_marchand__marchand_id__get",
+        "parameters": [
+          {
+            "name": "marchand_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Marchand Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaiementRead"
+                  },
+                  "title": "Response Paiements Par Marchand Paiements Marchand  Marchand Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/{paiement_id}/transferer": {
+      "put": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Transferer Au Marchand",
+        "operationId": "transferer_au_marchand_paiements__paiement_id__transferer_put",
+        "parameters": [
+          {
+            "name": "paiement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Paiement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaiementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/statut/{statut}": {
+      "get": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Paiements Par Statut",
+        "operationId": "paiements_par_statut_paiements_statut__statut__get",
+        "parameters": [
+          {
+            "name": "statut",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/StatutPaiement-Input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaiementRead"
+                  },
+                  "title": "Response Paiements Par Statut Paiements Statut  Statut  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paiements/{paiement_id}/rembourser": {
+      "put": {
+        "tags": [
+          "Paiements",
+          "Paiements"
+        ],
+        "summary": "Rembourser Paiement",
+        "operationId": "rembourser_paiement_paiements__paiement_id__rembourser_put",
+        "parameters": [
+          {
+            "name": "paiement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Paiement Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaiementRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/": {
+      "get": {
+        "tags": [
+          "Notifications",
+          "Notifications"
+        ],
+        "summary": "Lire Notifications",
+        "operationId": "lire_notifications_notifications__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "user_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Type"
+            }
+          },
+          {
+            "name": "non_lues",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Non Lues"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationRead"
+                  },
+                  "title": "Response Lire Notifications Notifications  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Notifications",
+          "Notifications"
+        ],
+        "summary": "Ajouter Notification",
+        "operationId": "ajouter_notification_notifications__post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{notif_id}/lue": {
+      "patch": {
+        "tags": [
+          "Notifications",
+          "Notifications"
+        ],
+        "summary": "Marquer Notification Comme Lue",
+        "operationId": "marquer_notification_comme_lue_notifications__notif_id__lue_patch",
+        "parameters": [
+          {
+            "name": "notif_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Notif Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/export-openapi": {
+      "get": {
+        "summary": "Export Openapi",
+        "operationId": "export_openapi_export_openapi_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AbonnementRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "marchand_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Marchand Id"
+          },
+          "montant": {
+            "type": "number",
+            "title": "Montant"
+          },
+          "date_debut": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Debut"
+          },
+          "date_expiration": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Expiration"
+          },
+          "statut": {
+            "$ref": "#/components/schemas/StatutAbonnement"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "marchand_id",
+          "montant",
+          "date_debut",
+          "date_expiration",
+          "statut"
+        ],
+        "title": "AbonnementRead"
+      },
+      "AbonnementUpdate": {
+        "properties": {
+          "montant": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Montant"
+          },
+          "statut": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatutAbonnement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "date_expiration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Expiration"
+          }
+        },
+        "type": "object",
+        "title": "AbonnementUpdate"
+      },
+      "AdresseCreate": {
+        "properties": {
+          "pays": {
+            "type": "string",
+            "title": "Pays"
+          },
+          "ville": {
+            "type": "string",
+            "title": "Ville"
+          },
+          "position_point_wkt": {
+            "type": "string",
+            "title": "Position Point Wkt"
+          },
+          "zone_polygone_wkt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone Polygone Wkt"
+          },
+          "utilisateur_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utilisateur Id"
+          },
+          "marchand_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marchand Id"
+          },
+          "livreur_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Livreur Id"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pays",
+          "ville",
+          "position_point_wkt"
+        ],
+        "title": "AdresseCreate",
+        "example": {
+          "client_id": "abf4c1c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "pays": "France",
+          "position_point_wkt": "POINT(2.3522 48.8566)",
+          "ville": "Paris"
+        }
+      },
+      "AdresseRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "pays": {
+            "type": "string",
+            "title": "Pays"
+          },
+          "ville": {
+            "type": "string",
+            "title": "Ville"
+          },
+          "position_point_wkt": {
+            "type": "string",
+            "title": "Position Point Wkt"
+          },
+          "zone_polygone_wkt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone Polygone Wkt"
+          },
+          "utilisateur_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utilisateur Id"
+          },
+          "marchand_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marchand Id"
+          },
+          "livreur_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Livreur Id"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pays",
+          "ville",
+          "position_point_wkt",
+          "utilisateur_id",
+          "marchand_id",
+          "livreur_id",
+          "client_id"
+        ],
+        "title": "AdresseRead"
+      },
+      "AvisCreate": {
+        "properties": {
+          "livreur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livreur Id"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "client_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Client Id"
+          },
+          "commentaire": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commentaire"
+          },
+          "note": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Note",
+            "description": "Note sur 5"
+          }
+        },
+        "type": "object",
+        "required": [
+          "livreur_id",
+          "livraison_id",
+          "client_id",
+          "note"
+        ],
+        "title": "AvisCreate"
+      },
+      "AvisRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "livreur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livreur Id"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "client_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Client Id"
+          },
+          "commentaire": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commentaire"
+          },
+          "note": {
+            "type": "integer",
+            "title": "Note"
+          },
+          "date_avis": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Avis"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "livreur_id",
+          "livraison_id",
+          "client_id",
+          "commentaire",
+          "note",
+          "date_avis"
+        ],
+        "title": "AvisRead"
+      },
+      "ChangementStatutCommande": {
+        "properties": {
+          "nouveau_statut": {
+            "$ref": "#/components/schemas/StatutCommande"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nouveau_statut"
+        ],
+        "title": "ChangementStatutCommande"
+      },
+      "CleAPICreate": {
+        "properties": {
+          "nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nom"
+          },
+          "utilisateur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Utilisateur Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "utilisateur_id"
+        ],
+        "title": "CleAPICreate"
+      },
+      "CleAPIResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nom"
+          },
+          "cle": {
+            "type": "string",
+            "title": "Cle"
+          },
+          "utilisateur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Utilisateur Id"
+          },
+          "est_active": {
+            "type": "boolean",
+            "title": "Est Active"
+          },
+          "date_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Creation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nom",
+          "cle",
+          "utilisateur_id",
+          "est_active",
+          "date_creation"
+        ],
+        "title": "CleAPIResponse"
+      },
+      "ClientCreate": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "adresse": {
+            "type": "string",
+            "title": "Adresse"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "adresse",
+          "contact"
+        ],
+        "title": "ClientCreate"
+      },
+      "ClientOut": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "adresse": {
+            "type": "string",
+            "title": "Adresse"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "date_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Creation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "adresse",
+          "contact",
+          "id",
+          "date_creation"
+        ],
+        "title": "ClientOut"
+      },
+      "ClientUpdate": {
+        "properties": {
+          "nom": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nom"
+          },
+          "adresse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adresse"
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact"
+          }
+        },
+        "type": "object",
+        "title": "ClientUpdate"
+      },
+      "CommandeCreate": {
+        "properties": {
+          "marchand_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Marchand Id"
+          },
+          "client_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Client Id"
+          },
+          "details": {
+            "type": "object",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "marchand_id",
+          "client_id",
+          "details"
+        ],
+        "title": "CommandeCreate",
+        "example": {
+          "client_id": "abf4c1c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "details": {
+            "produits": [
+              {
+                "id": 1,
+                "nom": "T-shirt en coton",
+                "prix": 29.99,
+                "quantite": 2
+              }
+            ]
+          },
+          "marchand_id": "b5cee64b-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        }
+      },
+      "CommandeRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "reference": {
+            "type": "string",
+            "title": "Reference"
+          },
+          "statut": {
+            "$ref": "#/components/schemas/StatutCommande"
+          },
+          "total": {
+            "type": "number",
+            "title": "Total"
+          },
+          "articles": {
+            "type": "object",
+            "title": "Articles"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "marchand_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marchand Id"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reference",
+          "statut",
+          "total",
+          "articles",
+          "created_at",
+          "marchand_id",
+          "client_id"
+        ],
+        "title": "CommandeRead"
+      },
+      "CommandeUpdate": {
+        "properties": {
+          "details": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "title": "CommandeUpdate",
+        "example": {
+          "details": {
+            "produits": [
+              {
+                "id": 1,
+                "nom": "T-shirt en coton",
+                "prix": 29.99,
+                "quantite": 3
+              }
+            ]
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LivraisonCreate": {
+        "properties": {
+          "commande_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Commande Id"
+          },
+          "livreur_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Livreur Id"
+          },
+          "statut": {
+            "$ref": "#/components/schemas/StatutLivraison",
+            "default": "en_attente"
+          }
+        },
+        "type": "object",
+        "required": [
+          "commande_id"
+        ],
+        "title": "LivraisonCreate"
+      },
+      "LivraisonStatutUpdate": {
+        "properties": {
+          "nouveau_statut": {
+            "$ref": "#/components/schemas/StatutLivraison"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nouveau_statut"
+        ],
+        "title": "LivraisonStatutUpdate"
+      },
+      "LivreurCreate": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "vehicule": {
+            "$ref": "#/components/schemas/TypeVehicule"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "immatriculation": {
+            "type": "string",
+            "title": "Immatriculation"
+          },
+          "statut": {
+            "$ref": "#/components/schemas/StatutLivreur",
+            "default": "disponible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "vehicule",
+          "contact",
+          "immatriculation"
+        ],
+        "title": "LivreurCreate"
+      },
+      "LivreurRead": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "vehicule": {
+            "$ref": "#/components/schemas/TypeVehicule"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "immatriculation": {
+            "type": "string",
+            "title": "Immatriculation"
+          },
+          "statut": {
+            "$ref": "#/components/schemas/StatutLivreur",
+            "default": "disponible"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "date_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Creation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "vehicule",
+          "contact",
+          "immatriculation",
+          "id",
+          "date_creation"
+        ],
+        "title": "LivreurRead"
+      },
+      "LivreurUpdate": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "vehicule": {
+            "$ref": "#/components/schemas/TypeVehicule"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "immatriculation": {
+            "type": "string",
+            "title": "Immatriculation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "vehicule",
+          "contact",
+          "immatriculation"
+        ],
+        "title": "LivreurUpdate"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "mot_de_passe": {
+            "type": "string",
+            "title": "Mot De Passe"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "mot_de_passe"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type"
+        ],
+        "title": "LoginResponse"
+      },
+      "MarchandCreate": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "adresse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adresse"
+          },
+          "utilisateur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Utilisateur Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "contact",
+          "utilisateur_id"
+        ],
+        "title": "MarchandCreate"
+      },
+      "MarchandOut": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "contact": {
+            "type": "string",
+            "title": "Contact"
+          },
+          "adresse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adresse"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "date_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Creation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "contact",
+          "id",
+          "date_creation"
+        ],
+        "title": "MarchandOut"
+      },
+      "MethodePaiement": {
+        "type": "string",
+        "enum": [
+          "mixx",
+          "flooz",
+          "presentiel"
+        ],
+        "title": "MethodePaiement"
+      },
+      "NotificationCreate": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "user_type": {
+            "type": "string",
+            "title": "User Type"
+          },
+          "titre": {
+            "type": "string",
+            "title": "Titre"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TypeNotification",
+            "default": "info"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "user_type",
+          "titre",
+          "message"
+        ],
+        "title": "NotificationCreate"
+      },
+      "NotificationRead": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "user_type": {
+            "type": "string",
+            "title": "User Type"
+          },
+          "titre": {
+            "type": "string",
+            "title": "Titre"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TypeNotification",
+            "default": "info"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "lu": {
+            "type": "boolean",
+            "title": "Lu"
+          },
+          "date_envoi": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Envoi"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "user_type",
+          "titre",
+          "message",
+          "id",
+          "lu",
+          "date_envoi"
+        ],
+        "title": "NotificationRead",
+        "example": {
+          "date_envoi": "2025-07-16T10:50:00.811648",
+          "id": "d1f4c1c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "lu": false,
+          "message": "Votre commande a \u00e9t\u00e9 valid\u00e9e.",
+          "titre": "Nouvelle commande",
+          "type": "success",
+          "user_id": "abf4c1c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "user_type": "client"
+        }
+      },
+      "PaiementCreate": {
+        "properties": {
+          "montant": {
+            "type": "number",
+            "title": "Montant"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "client_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Client Id"
+          },
+          "methode_paiement": {
+            "$ref": "#/components/schemas/MethodePaiement"
+          }
+        },
+        "type": "object",
+        "required": [
+          "montant",
+          "livraison_id",
+          "client_id",
+          "methode_paiement"
+        ],
+        "title": "PaiementCreate"
+      },
+      "PaiementRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Client Id"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "montant": {
+            "type": "number",
+            "title": "Montant"
+          },
+          "methode_paiement": {
+            "$ref": "#/components/schemas/MethodePaiement"
+          },
+          "statut_paiement": {
+            "$ref": "#/components/schemas/StatutPaiement-Output"
+          },
+          "recu_par": {
+            "$ref": "#/components/schemas/RecuPar"
+          },
+          "date_paiement": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Paiement"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "livraison_id",
+          "montant",
+          "methode_paiement",
+          "statut_paiement",
+          "recu_par",
+          "date_paiement"
+        ],
+        "title": "PaiementRead"
+      },
+      "PositionCreate": {
+        "properties": {
+          "livreur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livreur Id"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "livreur_id",
+          "livraison_id",
+          "latitude",
+          "longitude"
+        ],
+        "title": "PositionCreate"
+      },
+      "PositionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "livreur_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livreur Id"
+          },
+          "livraison_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Livraison Id"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "livreur_id",
+          "livraison_id",
+          "latitude",
+          "longitude",
+          "timestamp"
+        ],
+        "title": "PositionOut"
+      },
+      "PositionUpdate": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        },
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "title": "PositionUpdate"
+      },
+      "ProblemeSignalement": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "ProblemeSignalement"
+      },
+      "RecuPar": {
+        "type": "string",
+        "enum": [
+          "marchand",
+          "livreur"
+        ],
+        "title": "RecuPar"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "mot_de_passe": {
+            "type": "string",
+            "title": "Mot De Passe"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "nom",
+          "email",
+          "mot_de_passe",
+          "role"
+        ],
+        "title": "RegisterRequest"
+      },
+      "RegisterResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nom": {
+            "type": "string",
+            "title": "Nom"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nom",
+          "email"
+        ],
+        "title": "RegisterResponse"
+      },
+      "StatistiquesAPIResponse": {
+        "properties": {
+          "total_cles": {
+            "type": "integer",
+            "title": "Total Cles"
+          },
+          "cles_actives": {
+            "type": "integer",
+            "title": "Cles Actives"
+          },
+          "cles_revoquees": {
+            "type": "integer",
+            "title": "Cles Revoquees"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_cles",
+          "cles_actives",
+          "cles_revoquees"
+        ],
+        "title": "StatistiquesAPIResponse"
+      },
+      "StatutAbonnement": {
+        "type": "string",
+        "enum": [
+          "actif",
+          "expir\u00e9",
+          "suspendu"
+        ],
+        "title": "StatutAbonnement"
+      },
+      "StatutCommande": {
+        "type": "string",
+        "enum": [
+          "en_attente",
+          "valid\u00e9e",
+          "annul\u00e9e",
+          "en_cours",
+          "livr\u00e9e"
+        ],
+        "title": "StatutCommande"
+      },
+      "StatutLivraison": {
+        "type": "string",
+        "enum": [
+          "en_attente",
+          "acceptee",
+          "en_cours",
+          "terminee",
+          "annulee"
+        ],
+        "title": "StatutLivraison"
+      },
+      "StatutLivreur": {
+        "type": "string",
+        "enum": [
+          "disponible",
+          "indisponible"
+        ],
+        "title": "StatutLivreur"
+      },
+      "StatutLivreurUpdate": {
+        "properties": {
+          "nouveau_statut": {
+            "$ref": "#/components/schemas/StatutLivreur"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nouveau_statut"
+        ],
+        "title": "StatutLivreurUpdate"
+      },
+      "StatutPaiement-Input": {
+        "type": "string",
+        "enum": [
+          "en_attente",
+          "remis_livreur",
+          "paye",
+          "\u00e9choue",
+          "rembourse"
+        ],
+        "title": "StatutPaiement"
+      },
+      "StatutPaiement-Output": {
+        "type": "string",
+        "enum": [
+          "en_attente",
+          "remis_livreur",
+          "paye",
+          "echoue",
+          "rembourse"
+        ],
+        "title": "StatutPaiement"
+      },
+      "TypeNotification": {
+        "type": "string",
+        "enum": [
+          "info",
+          "warning",
+          "error",
+          "success"
+        ],
+        "title": "TypeNotification"
+      },
+      "TypeVehicule": {
+        "type": "string",
+        "enum": [
+          "moto",
+          "voiture",
+          "camion"
+        ],
+        "title": "TypeVehicule"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

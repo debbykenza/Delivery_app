@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum as PyEnum
 import uuid
-
 from sqlalchemy import Boolean, Column, DateTime, String, Enum
 from sqlalchemy.dialects.postgresql import UUID as SQLUUID  # important
 

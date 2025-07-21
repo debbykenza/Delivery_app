@@ -1,5 +1,6 @@
 # schemas/abonnement.py
 
+from typing import Optional
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -34,3 +35,5 @@ class AbonnementUpdate(BaseModel):
     montant: float | None = None
     statut: StatutAbonnement | None = None
     date_expiration: datetime | None = None
+
+
