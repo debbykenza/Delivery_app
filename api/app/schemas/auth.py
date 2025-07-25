@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel, EmailStr
 
 class LoginRequest(BaseModel):
@@ -27,3 +30,13 @@ class RegisterResponse(BaseModel):
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
+
+class UtilisateurResponse(BaseModel):
+    id: UUID
+    nom: str
+    email: EmailStr
+    role: str
+    # created_at: datetime
+
+    class Config:
+        orm_mode = True

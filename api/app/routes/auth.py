@@ -1,9 +1,12 @@
+from gotrue import User
 from app.core.database import SessionLocal
 from app.core.security import create_access_token
 from fastapi import Depends, HTTPException, status  
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
-from app.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse
+from app.dependencies.auth import recuperer_utilisateur_courant
+from app.models.utilisateur import Utilisateur
+from app.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UtilisateurResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -56,3 +59,10 @@ def connexion_utilisateur(
     access_token = create_access_token(data={"sub": str(utilisateur.id)})
     
     return LoginResponse(access_token=access_token, token_type="bearer")
+
+
+@router.get("/me", response_model=UtilisateurResponse)
+async def read_current_user(
+    current_user: Utilisateur = Depends(recuperer_utilisateur_courant)
+):
+    return current_user
