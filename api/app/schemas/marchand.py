@@ -19,6 +19,16 @@ class MarchandOut(MarchandBase):
     class Config:
         orm_mode = True
 
+class MarchandRead(BaseModel):
+    id: UUID
+    nom: str
+    contact: Optional[str]
+    adresse: Optional[str]
+    utilisateur_id: UUID
+
+    class Config:
+        from_attributes = True
+    
 class MarchandUpdate(BaseModel):
     nom: Optional[str] = None
     contact: Optional[str] = None

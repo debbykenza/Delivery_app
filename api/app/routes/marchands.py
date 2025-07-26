@@ -1,6 +1,7 @@
 from http.client import HTTPException
 from app.models.marchand import Marchand
-from app.schemas.marchand import MarchandCreate, MarchandOut
+from app.models.utilisateur import Utilisateur
+from app.schemas.marchand import MarchandCreate, MarchandOut, MarchandRead
 from app.core.database import get_db
 from app.dependencies.auth import recuperer_utilisateur_courant
 from fastapi import APIRouter, Depends, Query
@@ -17,6 +18,13 @@ def creer_marchand(marchand_data: MarchandCreate, db: Session = Depends(get_db))
 @router.get("/", response_model=list[MarchandOut])
 def lister_marchands(db: Session = Depends(get_db)):
     return marchand_service.lister_marchands(db)
+
+@router.get("/par-utilisateur", response_model=list[MarchandRead])
+def lister_marchands_par_utilisateur_courant(
+    db: Session = Depends(get_db),
+    utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant),
+):
+    return marchand_service.lister_marchands_par_utilisateur(db, utilisateur.id)
 
 @router.get("/statistiques")
 # def voir_statistiques_livraisons(

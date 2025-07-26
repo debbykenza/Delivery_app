@@ -44,6 +44,10 @@ def creer_marchand(db: Session, marchand_data: MarchandCreate):
 def lister_marchands(db: Session):
     return db.query(Marchand).all()
 
+def lister_marchands_par_utilisateur(db: Session, utilisateur_id: UUID):
+    return db.query(Marchand).filter(Marchand.utilisateur_id == utilisateur_id).all()
+
+
 def obtenir_marchand(db: Session, marchand_id: UUID):
     marchand = db.query(Marchand).filter(Marchand.id == marchand_id).first()
     if not marchand:
