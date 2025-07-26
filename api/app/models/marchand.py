@@ -21,5 +21,6 @@ class Marchand(Base):
     requetes_api = relationship("RequeteAPI", back_populates="marchand")
 
     abonnement = relationship("Abonnement", back_populates="marchand", uselist=False)
+    cles = relationship("CleAPI", back_populates="marchand")
 
     

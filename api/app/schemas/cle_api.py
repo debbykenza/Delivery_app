@@ -6,12 +6,14 @@ from typing import Optional
 class CleAPICreate(BaseModel):
     nom: Optional[str] = None
     utilisateur_id: UUID
+    marchand_id: UUID
 
 class CleAPIResponse(BaseModel):
     id: UUID
     nom: Optional[str]
     cle: str
     utilisateur_id: UUID
+    marchand_nom: Optional[str] = None
     est_active: bool
     date_creation: datetime
 

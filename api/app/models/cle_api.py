@@ -12,7 +12,9 @@ class CleAPI(Base):
     cle = Column(String, unique=True, nullable=False)
     nom = Column(String)
     utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"), nullable=False)
+    marchand_id = Column(UUID(as_uuid=True), ForeignKey("marchands.id"), nullable=True)    
     est_active = Column(Boolean, default=True)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
 
     utilisateur = relationship("Utilisateur", back_populates="cles_api")
+    marchand = relationship("Marchand", back_populates="cles")
