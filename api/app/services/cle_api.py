@@ -10,7 +10,47 @@ from app.models.utilisateur import Utilisateur
 from app.schemas.notification import NotificationCreate
 from app.services.notification import creer_notification
 
-def creer_cle(db: Session, data: CleAPICreate) -> CleAPI:
+# def creer_cle(db: Session, data: CleAPICreate) -> CleAPI:
+#     cle = secrets.token_hex(32)
+#     cle_api = CleAPI(
+#         cle=cle,
+#         nom=data.nom,
+#         utilisateur_id=data.utilisateur_id,
+#         marchand_id=data.marchand_id,
+#     )
+#     db.add(cle_api)
+#     db.commit()
+#     db.refresh(cle_api)
+    
+#      # Notification de création
+#     notif = NotificationCreate(
+#         user_id=data.utilisateur_id,
+#         user_type="utilisateur",
+#         titre="Nouvelle clé API créée",
+#         message=f"La clé API « {data.nom} » a été générée.",
+#         type=TypeNotification.success
+#     )
+#     creer_notification(db, notif)
+    
+#      # ✅ Récupérer le nom du marchand
+#     marchand = db.query(Marchand).filter(Marchand.id == data.marchand_id).first()
+
+#     return CleAPIResponse(
+#         id=cle_api.id,
+#         nom=cle_api.nom,
+#         cle=cle_api.cle,
+#         utilisateur_id=cle_api.utilisateur_id,
+#         marchand_nom=marchand.nom if marchand else None,
+#         est_active=cle_api.est_active,
+#         date_creation=cle_api.date_creation
+#     )
+#     # return cle_api
+
+# def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID):
+#     return db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).all()
+
+def creer_cle(db: Session, data: CleAPICreate) -> CleAPIResponse:
+    """Créer une nouvelle clé API"""
     cle = secrets.token_hex(32)
     cle_api = CleAPI(
         cle=cle,
@@ -22,7 +62,7 @@ def creer_cle(db: Session, data: CleAPICreate) -> CleAPI:
     db.commit()
     db.refresh(cle_api)
     
-     # Notification de création
+    # Notification de création
     notif = NotificationCreate(
         user_id=data.utilisateur_id,
         user_type="utilisateur",
@@ -32,9 +72,10 @@ def creer_cle(db: Session, data: CleAPICreate) -> CleAPI:
     )
     creer_notification(db, notif)
     
-     # ✅ Récupérer le nom du marchand
+    # Récupérer le nom du marchand
     marchand = db.query(Marchand).filter(Marchand.id == data.marchand_id).first()
 
+    # Retourner la réponse formatée
     return CleAPIResponse(
         id=cle_api.id,
         nom=cle_api.nom,
@@ -44,10 +85,27 @@ def creer_cle(db: Session, data: CleAPICreate) -> CleAPI:
         est_active=cle_api.est_active,
         date_creation=cle_api.date_creation
     )
-    # return cle_api
 
-def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID):
-    return db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).all()
+def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID) -> list[CleAPIResponse]:
+    """Récupérer toutes les clés API d'un utilisateur avec les noms des marchands"""
+    cles = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).all()
+    
+    result = []
+    for cle in cles:
+        # Récupérer le nom du marchand
+        marchand = db.query(Marchand).filter(Marchand.id == cle.marchand_id).first()
+        
+        result.append(CleAPIResponse(
+            id=cle.id,
+            nom=cle.nom,
+            cle=cle.cle,
+            utilisateur_id=cle.utilisateur_id,
+            marchand_nom=marchand.nom if marchand else None,
+            est_active=cle.est_active,
+            date_creation=cle.date_creation
+        ))
+    
+    return result
 
 def recuperer_cles_par_marchand(db: Session, marchand_id: UUID):
     return db.query(CleAPI).filter(CleAPI.marchand_id == marchand_id).all()

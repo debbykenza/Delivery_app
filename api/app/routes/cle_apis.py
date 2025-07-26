@@ -1,6 +1,45 @@
+# from fastapi import APIRouter, Depends, HTTPException
+# from sqlalchemy.orm import Session
+# from uuid import UUID
+# from app.schemas.cle_api import *
+# from app.services.cle_api import *
+# from app.core.database import get_db
+
+# router = APIRouter(prefix="/cles-api", tags=["Clés API"])
+
+# @router.post("/creer", response_model=CleAPIResponse)
+# def creer_cle_api(payload: CleAPICreate, db: Session = Depends(get_db)):
+#     return creer_cle(db, payload)
+
+# @router.get("/liste", response_model=list[CleAPIResponse])
+# def lister_cles_api(utilisateur_id: UUID, db: Session = Depends(get_db)):
+#     return recuperer_cles_par_utilisateur(db, utilisateur_id)
+
+# @router.delete("/supprimer/{cle_id}", response_model=dict)
+# def supprimer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
+#     return supprimer_cle(db, cle_id)
+
+# @router.put("/revocation/{cle_id}", response_model=CleAPIResponse)
+# def revoquer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
+#     return revoquer_cle(db, cle_id)
+
+# @router.put("/nommer/{cle_id}", response_model=CleAPIResponse)
+# def nommer_cle_api(cle_id: UUID, nouveau_nom: str, db: Session = Depends(get_db)):
+#     return nommer_cle(db, cle_id, nouveau_nom)
+
+# @router.put("/regenerer/{cle_id}", response_model=CleAPIResponse)
+# def regenerer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
+#     return regenerer_cle(db, cle_id)
+
+# @router.get("/statistiques/{utilisateur_id}", response_model=StatistiquesAPIResponse)
+# def consulter_stats_api(utilisateur_id: UUID, db: Session = Depends(get_db)):
+#     return consulter_statistiques(db, utilisateur_id)
+
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
+from app.dependencies.auth import recuperer_utilisateur_courant
 from app.schemas.cle_api import *
 from app.services.cle_api import *
 from app.core.database import get_db
@@ -8,29 +47,59 @@ from app.core.database import get_db
 router = APIRouter(prefix="/cles-api", tags=["Clés API"])
 
 @router.post("/creer", response_model=CleAPIResponse)
-def creer_cle_api(payload: CleAPICreate, db: Session = Depends(get_db)):
+def creer_cle_api(
+    payload: CleAPICreate, 
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)  # Authentification
+):
+    # Utiliser l'utilisateur authentifié
+    payload.utilisateur_id = current_user.id
     return creer_cle(db, payload)
 
 @router.get("/liste", response_model=list[CleAPIResponse])
-def lister_cles_api(utilisateur_id: UUID, db: Session = Depends(get_db)):
-    return recuperer_cles_par_utilisateur(db, utilisateur_id)
+def lister_cles_api(
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)  # Authentification
+):
+    # Utiliser l'utilisateur authentifié automatiquement
+    return recuperer_cles_par_utilisateur(db, current_user.id)
 
 @router.delete("/supprimer/{cle_id}", response_model=dict)
-def supprimer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
-    return supprimer_cle(db, cle_id)
+def supprimer_cle_api(
+    cle_id: UUID, 
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return supprimer_cle(db, cle_id, current_user.id)  # Vérifier propriété
 
 @router.put("/revocation/{cle_id}", response_model=CleAPIResponse)
-def revoquer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
-    return revoquer_cle(db, cle_id)
+def revoquer_cle_api(
+    cle_id: UUID, 
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return revoquer_cle(db, cle_id, current_user.id)
 
 @router.put("/nommer/{cle_id}", response_model=CleAPIResponse)
-def nommer_cle_api(cle_id: UUID, nouveau_nom: str, db: Session = Depends(get_db)):
-    return nommer_cle(db, cle_id, nouveau_nom)
+def nommer_cle_api(
+    cle_id: UUID, 
+    payload: CleAPINomUpdate,  # Utiliser le schema
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return nommer_cle(db, cle_id, payload.nouveau_nom, current_user.id)
 
 @router.put("/regenerer/{cle_id}", response_model=CleAPIResponse)
-def regenerer_cle_api(cle_id: UUID, db: Session = Depends(get_db)):
-    return regenerer_cle(db, cle_id)
+def regenerer_cle_api(
+    cle_id: UUID, 
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return regenerer_cle(db, cle_id, current_user.id)
 
-@router.get("/statistiques/{utilisateur_id}", response_model=StatistiquesAPIResponse)
-def consulter_stats_api(utilisateur_id: UUID, db: Session = Depends(get_db)):
-    return consulter_statistiques(db, utilisateur_id)
+@router.get("/statistiques", response_model=StatistiquesAPIResponse)
+def consulter_stats_api(
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return consulter_statistiques(db, current_user.id)
