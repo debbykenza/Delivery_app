@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import HTTPException 
 from app.models.cle_api import CleAPI
 from app.models.marchand import Marchand
@@ -110,30 +111,53 @@ def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID) -> list[Cl
 def recuperer_cles_par_marchand(db: Session, marchand_id: UUID):
     return db.query(CleAPI).filter(CleAPI.marchand_id == marchand_id).all()
 
-def supprimer_cle(db: Session, cle_id: UUID):
+# def supprimer_cle(db: Session, cle_id: UUID):
+#     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+#     if not cle:
+#         raise HTTPException(status_code=404, detail="Clé introuvable")
+
+#     # ✅ Notification avec les bons champs
+#     notif = NotificationCreate(
+#         user_id=cle.utilisateur_id,
+#         user_type="utilisateur",
+#         titre="Clé API supprimée",
+#         message=f"La clé API « {cle.nom} » a été supprimée.",
+#         type=TypeNotification.warning
+#     )
+#     creer_notification(db, notif)
+
+#     db.delete(cle)
+#     db.commit()
+#     return {"message": "Clé supprimée avec succès"}
+
+
+# def revoquer_cle(db: Session, cle_id: UUID):
+#     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+#     if not cle:
+#         raise HTTPException(status_code=404, detail="Clé introuvable")
+#     cle.est_active = False
+#     db.commit()
+#     db.refresh(cle)
+    
+#     notif = NotificationCreate(
+#         user_id=cle.utilisateur_id,
+#         user_type="utilisateur",
+#         titre="Clé API révoquée",
+#         message=f"La clé API « {cle.nom} » a été révoquée.",
+#         type=TypeNotification.error
+#     )
+#     creer_notification(db, notif)
+#     return cle
+
+def revoquer_cle(db: Session, cle_id: UUID, utilisateur_id: UUID):
     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
     if not cle:
         raise HTTPException(status_code=404, detail="Clé introuvable")
-
-    # ✅ Notification avec les bons champs
-    notif = NotificationCreate(
-        user_id=cle.utilisateur_id,
-        user_type="utilisateur",
-        titre="Clé API supprimée",
-        message=f"La clé API « {cle.nom} » a été supprimée.",
-        type=TypeNotification.warning
-    )
-    creer_notification(db, notif)
-
-    db.delete(cle)
-    db.commit()
-    return {"message": "Clé supprimée avec succès"}
-
-
-def revoquer_cle(db: Session, cle_id: UUID):
-    cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
-    if not cle:
-        raise HTTPException(status_code=404, detail="Clé introuvable")
+    
+    # Vérifier que l'utilisateur est propriétaire de la clé
+    if cle.utilisateur_id != utilisateur_id:
+        raise HTTPException(status_code=403, detail="Non autorisé")
+    
     cle.est_active = False
     db.commit()
     db.refresh(cle)
@@ -148,10 +172,84 @@ def revoquer_cle(db: Session, cle_id: UUID):
     creer_notification(db, notif)
     return cle
 
-def nommer_cle(db: Session, cle_id: UUID, nouveau_nom: str):
-    cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+# def nommer_cle(db: Session, cle_id: UUID, nouveau_nom: str):
+#     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+#     if not cle:
+#         raise HTTPException(status_code=404, detail="Clé introuvable")
+#     cle.nom = nouveau_nom
+#     db.commit()
+#     db.refresh(cle)
+    
+#     notif = NotificationCreate(
+#         user_id=cle.utilisateur_id,
+#         user_type="utilisateur",
+#         titre="Nom de clé modifié",
+#         message=f"La clé API a été renommée en « {nouveau_nom} ».",
+#         type=TypeNotification.info
+#     )
+#     creer_notification(db, notif)
+#     return cle
+
+# def regenerer_cle(db: Session, cle_id: UUID):
+#     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+#     if not cle:
+#         raise HTTPException(status_code=404, detail="Clé introuvable")
+#     cle.cle = secrets.token_hex(32)
+#     cle.est_active = True
+#     db.commit()
+#     db.refresh(cle)
+    
+#     notif = NotificationCreate(
+#         user_id=cle.utilisateur_id,
+#         user_type="utilisateur",
+#         titre="Clé API régénérée",
+#         message=f"La clé API « {cle.nom} » a été régénérée et réactivée.",
+#         type=TypeNotification.info
+#     )
+#     creer_notification(db, notif)
+#     return cle
+
+def consulter_statistiques(db: Session, utilisateur_id: UUID):
+    total = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).count()
+    actives = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id, CleAPI.est_active == True).count()
+    inactives = total - actives
+    return {
+        "total_cles": total,
+        "cles_actives": actives,
+        "cles_revoquees": inactives
+    }
+
+def supprimer_cle(db: Session, cle_id: UUID, utilisateur_id: UUID):
+    cle = db.query(CleAPI).filter(
+        CleAPI.id == cle_id,
+        CleAPI.utilisateur_id == utilisateur_id
+    ).first()
+    
     if not cle:
-        raise HTTPException(status_code=404, detail="Clé introuvable")
+        raise HTTPException(status_code=404, detail="Clé introuvable ou non autorisée")
+
+    notif = NotificationCreate(
+        user_id=cle.utilisateur_id,
+        user_type="utilisateur",
+        titre="Clé API supprimée",
+        message=f"La clé API « {cle.nom} » a été supprimée.",
+        type=TypeNotification.warning
+    )
+    creer_notification(db, notif)
+
+    db.delete(cle)
+    db.commit()
+    return {"message": "Clé supprimée avec succès"}
+
+def nommer_cle(db: Session, cle_id: UUID, nouveau_nom: str, utilisateur_id: UUID):
+    cle = db.query(CleAPI).filter(
+        CleAPI.id == cle_id,
+        CleAPI.utilisateur_id == utilisateur_id
+    ).first()
+    
+    if not cle:
+        raise HTTPException(status_code=404, detail="Clé introuvable ou non autorisée")
+    
     cle.nom = nouveau_nom
     db.commit()
     db.refresh(cle)
@@ -166,10 +264,67 @@ def nommer_cle(db: Session, cle_id: UUID, nouveau_nom: str):
     creer_notification(db, notif)
     return cle
 
-def regenerer_cle(db: Session, cle_id: UUID):
-    cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()
+def modifier_cle(
+    db: Session, 
+    cle_id: UUID, 
+    utilisateur_id: UUID,
+    nouveau_nom: Optional[str] = None,
+    nouveau_marchand_id: Optional[UUID] = None
+) -> CleAPI:
+    """
+    Modifie une clé API existante.
+    Permet de changer le nom et/ou le marchand associé.
+    """
+    cle = db.query(CleAPI).filter(
+        CleAPI.id == cle_id,
+        CleAPI.utilisateur_id == utilisateur_id
+    ).first()
+    
     if not cle:
-        raise HTTPException(status_code=404, detail="Clé introuvable")
+        raise HTTPException(status_code=404, detail="Clé introuvable ou non autorisée")
+    
+    modifications = []
+    
+    if nouveau_nom is not None:
+        cle.nom = nouveau_nom
+        modifications.append(f"nom → {nouveau_nom}")
+    
+    if nouveau_marchand_id is not None:
+        # Vérifier que le nouveau marchand existe
+        marchand = db.query(Marchand).filter(Marchand.id == nouveau_marchand_id).first()
+        if not marchand:
+            raise HTTPException(status_code=404, detail="Marchand introuvable")
+        
+        cle.marchand_id = nouveau_marchand_id
+        modifications.append(f"marchand → {marchand.nom}")
+    
+    if not modifications:
+        raise HTTPException(status_code=400, detail="Aucune modification fournie")
+    
+    db.commit()
+    db.refresh(cle)
+    
+    # Notification
+    notif = NotificationCreate(
+        user_id=utilisateur_id,
+        user_type="utilisateur",
+        titre="Clé API modifiée",
+        message=f"La clé API a été modifiée ({', '.join(modifications)}).",
+        type=TypeNotification.info
+    )
+    creer_notification(db, notif)
+    
+    return cle
+
+def regenerer_cle(db: Session, cle_id: UUID, utilisateur_id: UUID):
+    cle = db.query(CleAPI).filter(
+        CleAPI.id == cle_id,
+        CleAPI.utilisateur_id == utilisateur_id
+    ).first()
+    
+    if not cle:
+        raise HTTPException(status_code=404, detail="Clé introuvable ou non autorisée")
+    
     cle.cle = secrets.token_hex(32)
     cle.est_active = True
     db.commit()
@@ -184,13 +339,3 @@ def regenerer_cle(db: Session, cle_id: UUID):
     )
     creer_notification(db, notif)
     return cle
-
-def consulter_statistiques(db: Session, utilisateur_id: UUID):
-    total = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).count()
-    actives = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id, CleAPI.est_active == True).count()
-    inactives = total - actives
-    return {
-        "total_cles": total,
-        "cles_actives": actives,
-        "cles_revoquees": inactives
-    }

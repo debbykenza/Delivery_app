@@ -84,3 +84,14 @@ class CleAPIUpdateResponse(BaseModel):
         from_attributes = True
         orm_mode = True
         
+class CleAPIModification(BaseModel):
+    nouveau_nom: Optional[str] = None
+    nouveau_marchand_id: Optional[UUID] = None
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "nouveau_nom": "Nouveau nom de clé",
+                "nouveau_marchand_id": "123e4567-e89b-12d3-a456-426614174000"
+            }
+        }

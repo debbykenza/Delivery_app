@@ -56,6 +56,28 @@ def creer_cle_api(
     payload.utilisateur_id = current_user.id
     return creer_cle(db, payload)
 
+@router.put("/modifier/{cle_id}", response_model=CleAPIResponse)
+def modifier_cle_api(
+    cle_id: UUID,
+    modifications: CleAPIModification,
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    """
+    Modifie une clé API existante.
+    Permet de changer:
+    - Le nom de la clé
+    - Le marchand associé
+    Les deux modifications peuvent être faites simultanément.
+    """
+    return modifier_cle(
+        db=db,
+        cle_id=cle_id,
+        utilisateur_id=current_user.id,
+        nouveau_nom=modifications.nouveau_nom,
+        nouveau_marchand_id=modifications.nouveau_marchand_id
+    )
+
 @router.get("/liste", response_model=list[CleAPIResponse])
 def lister_cles_api(
     db: Session = Depends(get_db),
