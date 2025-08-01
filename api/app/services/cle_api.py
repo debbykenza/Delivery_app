@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from app.models.cle_api import CleAPI
 from app.models.marchand import Marchand
 from app.models.notification import TypeNotification
-from app.schemas.cle_api import CleAPICreate, CleAPIResponse
+from app.schemas.cle_api import CleAPICreate, CleAPIParMarchand, CleAPIResponse
 from sqlalchemy.orm import Session
 from uuid import UUID
 import secrets
@@ -110,6 +110,41 @@ def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID) -> list[Cl
 
 def recuperer_cles_par_marchand(db: Session, marchand_id: UUID):
     return db.query(CleAPI).filter(CleAPI.marchand_id == marchand_id).all()
+
+
+def obtenir_cle_par_marchand(
+    db: Session, 
+    marchand_id: UUID,
+    utilisateur_id: UUID
+) -> CleAPIParMarchand:
+    """
+    Récupère la clé API associée à un marchand spécifique
+    Vérifie que l'utilisateur a bien accès à ce marchand
+    """
+    # Vérifier d'abord que l'utilisateur possède ce marchand
+    marchand = db.query(Marchand).filter(
+        Marchand.id == marchand_id,
+        Marchand.utilisateur_id == utilisateur_id
+    ).first()
+
+    if not marchand:
+        raise HTTPException(
+            status_code=404,
+            detail="Marchand non trouvé ou non autorisé"
+        )
+
+    cle = db.query(CleAPI).filter(
+        CleAPI.marchand_id == marchand_id,
+        CleAPI.est_active == True
+    ).first()
+
+    if not cle:
+        raise HTTPException(
+            status_code=404,
+            detail="Aucune clé API active trouvée pour ce marchand"
+        )
+
+    return cle
 
 # def supprimer_cle(db: Session, cle_id: UUID):
 #     cle = db.query(CleAPI).filter(CleAPI.id == cle_id).first()

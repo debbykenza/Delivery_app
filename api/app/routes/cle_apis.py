@@ -125,3 +125,15 @@ def consulter_stats_api(
     current_user = Depends(recuperer_utilisateur_courant)
 ):
     return consulter_statistiques(db, current_user.id)
+
+@router.get("/par-marchand/{marchand_id}", response_model=CleAPIParMarchand)
+def get_cle_par_marchand(
+    marchand_id: UUID,
+    db: Session = Depends(get_db),
+    utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant)
+):
+    """
+    Récupère la clé API active associée à un marchand spécifique
+    Nécessite que l'utilisateur soit propriétaire du marchand
+    """
+    return obtenir_cle_par_marchand(db, marchand_id, utilisateur.id)

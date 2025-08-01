@@ -95,3 +95,13 @@ class CleAPIModification(BaseModel):
                 "nouveau_marchand_id": "123e4567-e89b-12d3-a456-426614174000"
             }
         }
+        
+class CleAPIParMarchand(BaseModel):
+    id: UUID
+    cle: str
+    nom: str
+    est_active: bool
+    date_creation: datetime
+
+    class Config:
+        from_attributes = True
