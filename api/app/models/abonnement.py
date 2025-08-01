@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from sqlalchemy import Column, Float, Enum, DateTime, ForeignKey
+from sqlalchemy import Column, Float, Enum, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -22,5 +22,9 @@ class Abonnement(Base):
     date_debut = Column(DateTime, default=datetime.utcnow)
     date_expiration = Column(DateTime)
     statut = Column(Enum(StatutAbonnement), default=StatutAbonnement.actif)
+    numero = Column(String(155), unique=True, nullable=False)
+    # pays= Column(String(5), nullable=False) 
+    # lien_de_paiement = Column(String(255), nullable=False)
+    # transaction_id= Column(String(255), nullable=False, unique=True)
 
     marchand = relationship("Marchand", back_populates="abonnement")

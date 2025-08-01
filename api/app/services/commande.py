@@ -136,13 +136,17 @@
 #             return commande
 #         return None
 
+from fastapi import Depends, HTTPException
+from app.dependencies.auth import recuperer_utilisateur_courant
 from app.models.commande import Commande, StatutCommande
 from sqlalchemy.orm import Session
 import uuid
 
 from app.models.notification import TypeNotification
 from app.schemas.notification import NotificationCreate
+from app.services.marchand import lister_marchands_par_utilisateur, recevoir_commandes
 from app.services.notification import creer_notification
+from app.core.database import get_db
 
 
 class ServiceCommande:
@@ -285,3 +289,16 @@ class ServiceCommande:
         creer_notification(db, notif)
         db.delete(commande)
         db.commit()
+        
+        
+    @classmethod
+    def Lister_commandes_marchand(
+        db: Session = Depends(get_db),
+        utilisateur = Depends(recuperer_utilisateur_courant)
+    ):
+        marchand = lister_marchands_par_utilisateur(db, utilisateur.id)
+
+        if not marchand:
+            raise HTTPException(status_code=404, detail="Aucun marchand trouvé pour cet utilisateur.")
+
+        return obtenir_commandes(db, marchand.id)

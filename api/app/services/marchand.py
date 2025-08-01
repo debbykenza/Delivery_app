@@ -99,16 +99,7 @@ def supprimer_marchand(db: Session, marchand_id: UUID):
 def obtenir_marchand_par_utilisateur(db: Session, utilisateur_id: UUID):
     return db.query(Marchand).filter(Marchand.utilisateur_id == utilisateur_id).first()
 
-# def Lister_commandes_marchand(
-#     db: Session = Depends(get_db),
-#     utilisateur = Depends(recuperer_utilisateur_courant)
-# ):
-#     marchand = marchand_service.obtenir_marchand_par_utilisateur(db, utilisateur.id)
 
-#     if not marchand:
-#         raise HTTPException(status_code=404, detail="Aucun marchand trouvé pour cet utilisateur.")
-
-#     return marchand_service.recevoir_commandes(db, marchand.id)
 
 def recevoir_commandes(db: Session, marchand_id: UUID):
     return db.query(Commande).filter(Commande.marchand_id == marchand_id).all()

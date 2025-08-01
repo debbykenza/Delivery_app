@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -17,6 +18,7 @@ from app.routes import positions
 from app.routes import adresses
 from app.routes import abonnements
 from app.routes import notifications
+from app.services.supabase_listener import get_supabase_listener
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
 from app.models.commande import StatutCommande
@@ -90,7 +92,15 @@ app.include_router(paiements.router, tags=["Paiements"])
 app.include_router(notifications.router, tags=["Notifications"])
 #app.include_router(utilisateurs.router, tags=["utilisateurs"])
 
+@app.on_event("startup")
+async def startup_event():
+    # Démarrer l'écoute Supabase dans un task séparé
+    app.state.supabase_listener = await get_supabase_listener()
+    asyncio.create_task(app.state.supabase_listener.listen_to_notifications())
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    app.state.supabase_listener.running = False
 
 # def custom_openapi():
 #     if app.openapi_schema:

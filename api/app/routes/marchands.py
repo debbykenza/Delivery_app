@@ -54,10 +54,10 @@ def supprimer_marchand(marchand_id: UUID, db: Session = Depends(get_db)):
 
 
 
-# @router.get("/commandes/{marchand_id}")
-# def Lister_commandes_marchand(db: Session = Depends(get_db), utilisateur = Depends(recuperer_utilisateur_courant)):
-#     marchand = marchand_service.obtenir_marchand_par_utilisateur(db, utilisateur.id)
-#     return marchand_service.recevoir_commandes(db, marchand.id)
+@router.get("/commandes/{marchand_id}")
+def Lister_commandes_marchand(db: Session = Depends(get_db), utilisateur = Depends(recuperer_utilisateur_courant)):
+    marchand = marchand_service.obtenir_marchand_par_utilisateur(db, utilisateur.id)
+    return marchand_service.recevoir_commandes(db, marchand.id)
 
 
 

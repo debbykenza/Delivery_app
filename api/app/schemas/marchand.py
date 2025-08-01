@@ -25,7 +25,8 @@ class MarchandRead(BaseModel):
     contact: Optional[str]
     adresse: Optional[str]
     utilisateur_id: UUID
-
+    date_creation: datetime
+    
     class Config:
         from_attributes = True
     

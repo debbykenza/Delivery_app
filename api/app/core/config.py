@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = os.getenv("ALGORITHM")
     ACCESS_TOKEN_EXPIRE_HOURS : int = 3
     SUPABASE_DB_URL: str
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
     
     
     class Config:
