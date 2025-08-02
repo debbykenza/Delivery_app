@@ -32,10 +32,10 @@ def creer_marchand(db: Session, marchand_data: MarchandCreate):
     db.refresh(nouveau_marchand)
     
     notif = NotificationCreate(
-        user_id=nouveau_marchand.utilisateur_id,
-        user_type="marchand",
-        titre="Compte marchand créé",
-        message="Votre profil marchand a été créé avec succès.",
+        user_id=marchand_data.utilisateur_id,
+        user_type="utilisateur",
+        titre="Nouveau magasin créé",
+        message="Votre nouveau magasin a été créé avec succès.",
         type=TypeNotification.success
     )
     creer_notification(db, notif)
@@ -68,10 +68,10 @@ def modifier_marchand(db: Session, marchand_id: UUID, marchand_data: MarchandCre
     db.refresh(marchand)
     
     notif = NotificationCreate(
-        user_id=marchand.utilisateur_id,
-        user_type="marchand",
-        titre="Informations modifiées",
-        message="Vos informations ont été mises à jour avec succès.",
+        user_id=marchand_data.utilisateur_id,
+        user_type="utilisateur",
+        titre="Informations du magasin modifiées",
+        message="les informations de votre magasin ont été mises à jour avec succès.",
         type=TypeNotification.info
     )
     creer_notification(db, notif)
@@ -85,15 +85,15 @@ def supprimer_marchand(db: Session, marchand_id: UUID):
     
     notif = NotificationCreate(
         user_id=marchand.utilisateur_id,
-        user_type="marchand",
-        titre="Compte supprimé",
-        message="Votre profil marchand a été supprimé.",
+        user_type="utilisateur",
+        titre="Magasin supprimé",
+        message="Votre magasin a été supprimé.",
         type=TypeNotification.warning
     )
     creer_notification(db, notif)
     db.delete(marchand)
     db.commit()
-    return {"message": "Marchand supprimé avec succès"}
+    return {"message": "Magasin supprimé avec succès"}
 
 
 def obtenir_marchand_par_utilisateur(db: Session, utilisateur_id: UUID):
