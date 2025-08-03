@@ -97,7 +97,7 @@ def supprimer_marchand(db: Session, marchand_id: UUID):
 
 
 def obtenir_marchand_par_utilisateur(db: Session, utilisateur_id: UUID):
-    return db.query(Marchand).filter(Marchand.utilisateur_id == utilisateur_id).first()
+    return db.query(Marchand).filter(Marchand.utilisateur_id == utilisateur_id).all()
 
 
 

@@ -301,4 +301,9 @@ class ServiceCommande:
         if not marchand:
             raise HTTPException(status_code=404, detail="Aucun marchand trouvé pour cet utilisateur.")
 
-        return obtenir_commandes(db, marchand.id)
+        return ServiceCommande.obtenir_commandes(db, marchand.id)
+    
+    @classmethod
+    def obtenir_commandes_par_marchand(cls, db: Session, marchand_id : str):
+        """Retourne toutes les commandes d'un marchand spécifique"""
+        return db.query(Commande).filter(Commande.marchand_id == marchand_id).all()
