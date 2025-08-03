@@ -164,6 +164,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
+from app.schemas.client import ClientOut
 from app.schemas.commande import ChangementStatutCommande, CommandeCreate, CommandeUpdate, CommandeRead
 from app.services.commande import ServiceCommande
 from app.models.commande import StatutCommande
@@ -214,6 +215,18 @@ def lister_commandes_mes_marchands(
     
     return commandes
 
+@router.get("/{commande_id}/client", response_model=ClientOut)
+def obtenir_client_de_commande(commande_id: str, db: Session = Depends(get_db)):
+    """
+    Récupère le client associé à une commande spécifique
+    """
+    client = ServiceCommande.obtenir_client_par_commande(db, commande_id)
+    if not client:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Commande non trouvée ou client non associé"
+        )
+    return client
 
 @router.post("/", response_model=CommandeRead, status_code=status.HTTP_201_CREATED)
 def creer_commande(

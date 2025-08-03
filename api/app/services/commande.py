@@ -138,6 +138,7 @@
 
 from fastapi import Depends, HTTPException
 from app.dependencies.auth import recuperer_utilisateur_courant
+from app.models.client import Client
 from app.models.commande import Commande, StatutCommande
 from sqlalchemy.orm import Session
 import uuid
@@ -307,3 +308,15 @@ class ServiceCommande:
     def obtenir_commandes_par_marchand(cls, db: Session, marchand_id : str):
         """Retourne toutes les commandes d'un marchand spécifique"""
         return db.query(Commande).filter(Commande.marchand_id == marchand_id).all()
+    
+    @classmethod
+    def obtenir_client_par_commande(cls, db: Session, commande_id: str) -> Client:
+        """
+        Récupère le client associé à une commande spécifique
+        """
+        # Requête avec join pour récupérer directement le client
+        result = db.query(Client).join(
+            Commande, Client.id == Commande.client_id
+        ).filter(Commande.id == commande_id).first()
+        
+        return result
