@@ -57,7 +57,7 @@ class CommandeInfo(BaseModel):
     id: UUID
     reference: Optional[str] = None
     client_id: Optional[UUID] = None
-    montant_total: Optional[float] = None
+    total: Optional[float] = None
     
     class Config:
         from_attributes = True
