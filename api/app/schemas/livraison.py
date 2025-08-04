@@ -67,6 +67,9 @@ class LivreurInfo(BaseModel):
     nom: str
     # prenom: str
     contact: Optional[str] = None
+    statut: Optional[str] = None
+    vehicule: Optional[str] = None
+    immatriculation: Optional[str] = None
     
     class Config:
         from_attributes = True
