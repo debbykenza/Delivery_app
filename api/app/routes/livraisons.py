@@ -1,9 +1,11 @@
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
 
+from app.dependencies.auth import recuperer_utilisateur_courant
 from app.models.livraison import Livraison
-from app.schemas.livraison import LivraisonCreate, LivraisonStatutUpdate, ProblemeSignalement
+from app.schemas.livraison import LivraisonCreate, LivraisonRead, LivraisonStatutUpdate, ProblemeSignalement
 from app.services.livraison import LivraisonService
 from app.core.database import get_db
 
@@ -76,3 +78,44 @@ def mettre_a_jour_statut(livraison_id: UUID, update: LivraisonStatutUpdate, db: 
 # @router.put("/signaler-probleme/{livraison_id}")
 # def signaler_probleme(livraison_id: UUID, data: ProblemeSignalement, db: Session = Depends(get_db)):
 #     return LivraisonService.signaler_probleme(db, livraison_id, data)
+
+
+@router.get("/mes-livraisons", response_model=List[LivraisonRead])
+def mes_livraisons(
+    statut: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    return LivraisonService.get_livraisons_par_utilisateur(db, current_user.id, statut)
+    
+# @router.get("/mes-livraisons/{marchand_id}")
+# def Lister_commandes_marchand(marchand_id: str, db: Session = Depends(get_db), utilisateur = Depends(recuperer_utilisateur_courant)):
+#     marchand = marchand_service.obtenir_marchand_par_utilisateur(db, utilisateur.id)
+#     return ServiceCommande.obtenir_commandes_par_marchand(db, marchand_id)
+
+@router.get("/marchand/{marchand_id}", response_model=List[LivraisonRead])
+def livraisons_marchand(
+    marchand_id: UUID, 
+    statut: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Récupère les livraisons d'un marchand spécifique"""
+    return LivraisonService.get_livraisons_marchand(db, marchand_id, statut)
+
+@router.get("/livreur/{livreur_id}", response_model=List[LivraisonRead])
+def livraisons_livreur(
+    livreur_id: UUID, 
+    statut: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Récupère les livraisons d'un livreur spécifique"""
+    return LivraisonService.get_livraisons_livreur(db, livreur_id, statut)
+
+@router.get("/client/{client_id}", response_model=List[LivraisonRead])
+def livraisons_client(
+    client_id: UUID, 
+    statut: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Récupère les livraisons d'un client spécifique"""
+    return LivraisonService.get_livraisons_client(db, client_id, statut)

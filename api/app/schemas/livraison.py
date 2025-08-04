@@ -52,3 +52,37 @@ class ProblemeSignalement(BaseModel):
                 "description": "Le livreur a rencontré un problème avec la livraison."
             }
         }
+
+class CommandeInfo(BaseModel):
+    id: UUID
+    reference: Optional[str] = None
+    client_id: Optional[UUID] = None
+    montant_total: Optional[float] = None
+    
+    class Config:
+        from_attributes = True
+
+class LivreurInfo(BaseModel):
+    id: UUID
+    nom: str
+    # prenom: str
+    contact: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+class LivraisonRead(BaseModel):
+    id: UUID
+    commande_id: UUID
+    livreur_id: Optional[UUID] = None
+    # client_id: Optional[UUID] = None
+    statut: StatutLivraison
+    date_livraison: datetime
+    probleme: Optional[str] = None
+    
+    # Relations
+    commande: Optional[CommandeInfo] = None
+    livreur: Optional[LivreurInfo] = None
+    
+    class Config:
+        from_attributes = True

@@ -1,11 +1,14 @@
-from sqlalchemy.orm import Session
+from typing import Optional
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, and_
 from uuid import UUID
 from fastapi import HTTPException 
 
 from app.models.livraison import Livraison
 from app.models.commande import Commande
+from app.models.client import Client
 # from app.models.avis import Avis
+from app.models.marchand import Marchand
 from app.models.notification import TypeNotification
 from app.schemas.livraison import LivraisonCreate, LivraisonStatutUpdate, ProblemeSignalement
 from app.schemas.notification import NotificationCreate
@@ -352,3 +355,84 @@ class LivraisonService:
         db.delete(livraison)
         db.commit()
         return {"message": "Livraison supprimée avec succès"}
+    
+    
+    @staticmethod
+    def get_livraisons_par_utilisateur(db: Session, utilisateur_id: UUID, statut: Optional[str] = None):
+        """Récupère toutes les livraisons des marchands d'un utilisateur"""
+        # Récupère les marchands de l'utilisateur
+        marchands = db.query(Marchand).filter(Marchand.utilisateur_id == utilisateur_id).all()
+        
+        if not marchands:
+            return []
+        
+        marchand_ids = [m.id for m in marchands]
+        
+        query = db.query(Livraison).join(Commande).filter(
+            Commande.marchand_id.in_(marchand_ids)
+        ).options(
+            joinedload(Livraison.commande),
+            joinedload(Livraison.livreur)
+        )
+        
+        if statut:
+            query = query.filter(Livraison.statut == statut)
+            
+        return query.order_by(Livraison.date_livraison.desc()).all()
+    
+    @staticmethod
+    def get_livraisons_marchand(db: Session, marchand_id: UUID, statut: Optional[str] = None):
+        """Récupère les livraisons d'un marchand avec les données jointes"""
+        query = db.query(Livraison).join(Commande).filter(
+            Commande.marchand_id == marchand_id
+        ).options(
+            joinedload(Livraison.commande),
+            joinedload(Livraison.livreur)
+            # joinedload(Livraison.client)
+        )
+        
+        if statut:
+            query = query.filter(Livraison.statut == statut)
+            
+        return query.order_by(Livraison.date_livraison.desc()).all()
+
+    @staticmethod
+    def get_livraisons_livreur(db: Session, livreur_id: UUID, statut: Optional[str] = None):
+        """Récupère les livraisons d'un livreur avec les données jointes"""
+        query = db.query(Livraison).filter(
+            Livraison.livreur_id == livreur_id
+        ).options(
+            joinedload(Livraison.commande),
+            joinedload(Livraison.livreur)
+        )
+        
+        if statut:
+            query = query.filter(Livraison.statut == statut)
+            
+        return query.order_by(Livraison.date_livraison.desc()).all()
+
+    @staticmethod
+    def get_livraisons_client(db: Session, client_id: UUID, statut: Optional[str] = None):
+        """Récupère les livraisons d'un client avec les données jointes"""
+        query = db.query(Livraison).join(Commande).filter(
+            Commande.client_id == client_id
+        ).options(
+            joinedload(Livraison.commande),
+            joinedload(Livraison.livreur)
+        )
+        
+        if statut:
+            query = query.filter(Livraison.statut == statut)
+            
+        return query.order_by(Livraison.date_livraison.desc()).all()
+
+    @staticmethod
+    def get_livraison_with_details(db: Session, livraison_id: UUID):
+        """Récupère une livraison avec tous les détails"""
+        return db.query(Livraison).filter(
+            Livraison.id == livraison_id
+        ).options(
+            joinedload(Livraison.commande),
+            joinedload(Livraison.livreur)
+        ).first()
+
