@@ -25,7 +25,8 @@ def creer_marchand(db: Session, marchand_data: MarchandCreate):
         nom=marchand_data.nom,
         contact=marchand_data.contact,
         adresse=marchand_data.adresse,
-        utilisateur_id=marchand_data.utilisateur_id
+        utilisateur_id=marchand_data.utilisateur_id,
+        status="inactif"  # Par défaut, le statut est inactif
     )
     db.add(nouveau_marchand)
     db.commit()
@@ -110,7 +111,7 @@ def accepter_commande(db: Session, commande_id: UUID):
         commande.statut = "validée"
         db.commit()
         
-        # 🔔 Client
+        #  Client
         notif_client = NotificationCreate(
             user_id=commande.client_id,
             user_type="client",
@@ -120,7 +121,7 @@ def accepter_commande(db: Session, commande_id: UUID):
         )
         creer_notification(db, notif_client)
 
-        # 🔔 Marchand
+        #  Marchand
         notif_marchand = NotificationCreate(
             user_id=commande.marchand.utilisateur_id,
             user_type="marchand",
@@ -166,7 +167,7 @@ def lancer_livraison(db: Session, commande_id: UUID):
     db.commit()
     db.refresh(nouvelle_livraison)
     
-    # 🔔 Client
+    #  Client
     notif_client = NotificationCreate(
         user_id=commande.client_id,
         user_type="client",
@@ -176,7 +177,7 @@ def lancer_livraison(db: Session, commande_id: UUID):
     )
     creer_notification(db, notif_client)
 
-    # 🔔 Marchand
+    #  Marchand
     notif_marchand = NotificationCreate(
         user_id=commande.marchand.utilisateur_id,
         user_type="marchand",
@@ -186,7 +187,7 @@ def lancer_livraison(db: Session, commande_id: UUID):
     )
     creer_notification(db, notif_marchand)
 
-    # 🔔 Tous les livreurs → notification de disponibilité
+    # Tous les livreurs → notification de disponibilité
     livreurs = db.query(Livreur).all()
     for livreur in livreurs:
         notif_livreur = NotificationCreate(
@@ -211,7 +212,7 @@ def annuler_livraison(db: Session, commande_id: UUID):
         db.commit()
         db.refresh(commande)
         
-        # 🔔 Client
+        #  Client
         notif_client = NotificationCreate(
             user_id=commande.client_id,
             user_type="client",
@@ -221,7 +222,7 @@ def annuler_livraison(db: Session, commande_id: UUID):
         )
         creer_notification(db, notif_client)
 
-        # 🔔 Marchand
+        #  Marchand
         notif_marchand = NotificationCreate(
             user_id=commande.marchand.utilisateur_id,
             user_type="marchand",

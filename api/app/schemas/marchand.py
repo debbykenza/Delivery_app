@@ -11,6 +11,7 @@ class MarchandBase(BaseModel):
 class MarchandCreate(MarchandBase):
     utilisateur_id: UUID
     nom: str
+    status: str = "inactif"
 
 class MarchandOut(MarchandBase):
     id: UUID
@@ -22,6 +23,7 @@ class MarchandOut(MarchandBase):
 class MarchandRead(BaseModel):
     id: UUID
     nom: str
+    status: str
     contact: Optional[str]
     adresse: Optional[str]
     utilisateur_id: UUID

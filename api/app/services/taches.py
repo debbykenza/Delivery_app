@@ -4,7 +4,9 @@ import requests
 from gotrue import Session
 from app.models.abonnement import Abonnement
 from app.core.database import SessionLocal
-from apscheduler.schedulers.background import BackgroundScheduler  # Import manquant ajouté ici
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from app.models.marchand import Marchand  # Import manquant ajouté ici
 
 
 def check_transaction_status(tx_ref: str):
@@ -27,6 +29,10 @@ def check_transaction_status(tx_ref: str):
 
 def update_transaction_statuses():
     db: Session = SessionLocal()
+    
+    marchands = db.query(Marchand).filter(Marchand.status == "inactif").all()
+    
+    
     
     abonnements = db.query(Abonnement).filter(Abonnement.statut == "inactif").all()
     print(f"Vérification des transactions pour {len(abonnements)} abonnements inactifs...")
@@ -54,5 +60,5 @@ scheduler = BackgroundScheduler()
 
 def start_payment_checker():
     if not scheduler.running:
-        scheduler.add_job(update_transaction_statuses, 'interval', minutes=5)
+        scheduler.add_job(update_transaction_statuses, 'interval', seconds=10)
         scheduler.start()

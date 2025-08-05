@@ -14,6 +14,7 @@ class Marchand(Base):
     contact = Column(String, nullable=False)
     utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"))
     date_creation = Column(DateTime, default=datetime.utcnow)
+    status = Column(String, default="inactif", nullable=True)
     
     utilisateur = relationship("Utilisateur")
     commandes = relationship("Commande", back_populates="marchand")
