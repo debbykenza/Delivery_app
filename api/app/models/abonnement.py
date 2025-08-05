@@ -22,7 +22,7 @@ class Abonnement(Base):
     montant = Column(Float, nullable=False)
     date_debut = Column(DateTime, default=datetime.utcnow)
     date_expiration = Column(DateTime)
-    statut = Column(Enum(StatutAbonnement), default=StatutAbonnement.actif)
+    statut = Column(Enum(StatutAbonnement), default=StatutAbonnement.inactif)
     reference_abonnement = Column(String(50), unique=True, nullable=True)
     # numero = Column(String(155), unique=True, nullable=False)
     # pays= Column(String(5), nullable=False) 

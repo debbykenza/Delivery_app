@@ -11,6 +11,7 @@ class StatutAbonnement(str, Enum):
     actif = "actif"
     expiré = "expiré"
     suspendu = "suspendu"
+    inactif = "inactif"
 
 
 class AbonnementCreate(BaseModel):

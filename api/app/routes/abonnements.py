@@ -1,5 +1,6 @@
 # routes/abonnement.py
 
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
@@ -35,12 +36,13 @@ def obtenir_historique_abonnements(marchand_id: UUID, db: Session = Depends(get_
 def souscrire_abonnement(
     marchand_id: UUID,
     montant: float,
+    reference_abonnement: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     """
     Permet à un marchand de souscrire à un abonnement standard de 30 jours.
     """
-    abonnement = ServiceAbonnement.souscrire_abonnement(db, marchand_id, montant)
+    abonnement = ServiceAbonnement.souscrire_abonnement(db, marchand_id, montant, reference_abonnement)
 
     return {
         "message": "Abonnement souscrit avec succès",
