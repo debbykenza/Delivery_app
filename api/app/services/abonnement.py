@@ -46,13 +46,14 @@ class ServiceAbonnement:
         return abonnement
     
     @staticmethod
-    def souscrire_abonnement(db: Session, marchand_id: UUID, montant: float) -> Abonnement:
+    def souscrire_abonnement(db: Session, marchand_id: UUID, montant: float, reference_abonnement: str) -> Abonnement:
         """
         Permet à un marchand de souscrire un nouvel abonnement
         - Vérifie qu’il n’y a pas déjà un abonnement actif
         - Crée un abonnement actif de durée définie
         - Envoie une notification automatique
         """
+        
 
         # Vérification de l'existence d'un abonnement actif
         abonnement_actif = db.query(Abonnement).filter(
@@ -73,7 +74,8 @@ class ServiceAbonnement:
             montant=montant,
             date_debut=date_debut,
             date_expiration=date_expiration,
-            statut=StatutAbonnement.actif
+            statut=StatutAbonnement.inactif,
+            reference_abonnement=reference_abonnement,
         )
 
         db.add(nouvel_abonnement)

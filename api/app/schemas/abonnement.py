@@ -16,8 +16,8 @@ class StatutAbonnement(str, Enum):
 class AbonnementCreate(BaseModel):
     marchand_id: UUID
     montant: float
-    duree_jours: int = 30  # Par défaut 30 jours
-
+    duree_jours: int = 365  
+    reference_abonnement: str
 
 class AbonnementRead(BaseModel):
     id: UUID
@@ -26,6 +26,7 @@ class AbonnementRead(BaseModel):
     date_debut: datetime
     date_expiration: datetime
     statut: StatutAbonnement
+    reference_abonnement: str
 
     class Config:
         orm_mode = True

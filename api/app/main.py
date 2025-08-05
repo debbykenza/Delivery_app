@@ -32,6 +32,8 @@ from app.middlewares.journal_requete import JournalRequeteMiddleware
 
 from fastapi.openapi.utils import get_openapi
 
+from app.services.taches import start_payment_checker
+
 
 # 🔌 Vérification de la connexion à la base de données
 def test_db_connection():
@@ -97,6 +99,8 @@ async def startup_event():
     # Démarrer l'écoute Supabase dans un task séparé
     app.state.supabase_listener = await get_supabase_listener()
     asyncio.create_task(app.state.supabase_listener.listen_to_notifications())
+    start_payment_checker()
+    print("tâche lancée")
 
 @app.on_event("shutdown")
 async def shutdown_event():

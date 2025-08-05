@@ -47,6 +47,8 @@ def souscrire_abonnement(
         "montant": abonnement.montant,
         "date_debut": abonnement.date_debut.strftime("%d-%m-%Y %H:%M:%S"),
         "date_expiration": abonnement.date_expiration.strftime("%d-%m-%Y %H:%M:%S"),
+        "reference_abonnement": abonnement.reference_abonnement,
+        "marchand_id": abonnement.marchand_id,
     }
 
 
