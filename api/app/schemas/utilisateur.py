@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from uuid import UUID
@@ -15,6 +16,7 @@ class UtilisateurBase(BaseModel):
     mot_de_passe: Optional[str] = None
     is_active: Optional[bool] = True
     role: Optional[Role] = Role.utilisateur  # Valeur par défaut pour le rôle
+    
 
 class UtilisateurCreate(UtilisateurBase):
     mot_de_passe: str
@@ -24,6 +26,7 @@ class UtilisateurRead(UtilisateurBase):
     id: UUID
     is_active: bool
     role: str
+    date_creation: datetime
 
     class Config:
         from_attributes = True
@@ -41,6 +44,7 @@ class UtilisateurResponse(BaseModel):
     email: Optional[EmailStr] = None
     is_active: bool
     role: Role
+    date_creation: datetime
 
     class Config:
         from_attributes = True

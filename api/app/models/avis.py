@@ -18,6 +18,7 @@ class Avis(Base):
     livreur = relationship("Livreur", back_populates="avis")
     livraison = relationship("Livraison", back_populates="avis")
     client = relationship("Client", back_populates="avis")
+    
 
     
     

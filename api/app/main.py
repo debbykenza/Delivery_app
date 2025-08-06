@@ -18,6 +18,7 @@ from app.routes import positions
 from app.routes import adresses
 from app.routes import abonnements
 from app.routes import notifications
+from app.routes import utilisateurs
 from app.services.supabase_listener import get_supabase_listener
 from app.services.commande import ServiceCommande
 from app.schemas.commande import CommandeCreate, CommandeUpdate, CommandeRead
@@ -79,6 +80,7 @@ app.add_middleware(JournalRequeteMiddleware)
 
 # 📦 Inclusion des routes
 app.include_router(auth.router, tags=["auth"])
+app.include_router(utilisateurs.router, tags=["utilisateurs"])
 app.include_router(cle_apis.router, tags=["Clés API"])
 app.include_router(journal_requetes.router, tags=["Journal des Requêtes"])
 app.include_router(commandes.router, tags=["commandes"])
