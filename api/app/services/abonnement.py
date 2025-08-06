@@ -112,6 +112,14 @@ class ServiceAbonnement:
     @staticmethod
     def lister_abonnements(db: Session):
         return db.query(Abonnement).all()
+    
+    @staticmethod
+    def abonnements_par_utilisateur(db: Session, utilisateur_id: UUID) -> list[Abonnement]:
+        return db.query(Abonnement)\
+            .filter(Abonnement.utilisateur_id == utilisateur_id)\
+            .order_by(Abonnement.date_debut.desc())\
+            .all()
+
 
     @staticmethod
     def get_abonnement_par_id(db: Session, abonnement_id: UUID):

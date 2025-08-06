@@ -56,6 +56,14 @@ def souscrire_abonnement(
         "utilisateur_id": abonnement.utilisateur_id,
         
     }
+    
+@router.get("/mes-abonnements", response_model=list[AbonnementRead])
+def lister_mes_abonnements(
+    db: Session = Depends(get_db),
+    utilisateur_courant = Depends(recuperer_utilisateur_courant)
+):
+    return ServiceAbonnement.abonnements_par_utilisateur(db, utilisateur_courant.id)
+
 
 
 @router.get("/", response_model=list[AbonnementRead])
