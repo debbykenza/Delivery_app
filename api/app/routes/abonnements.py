@@ -57,18 +57,19 @@ def souscrire_abonnement(
         
     }
     
-@router.get("/mes-abonnements", response_model=list[AbonnementRead])
-def lister_mes_abonnements(
-    db: Session = Depends(get_db),
-    utilisateur_courant = Depends(recuperer_utilisateur_courant)
-):
-    return ServiceAbonnement.abonnements_par_utilisateur(db, utilisateur_courant.id)
 
 
 
 @router.get("/", response_model=list[AbonnementRead])
 def lister_abonnements(db: Session = Depends(get_db)):
     return ServiceAbonnement.lister_abonnements(db)
+
+@router.get("/mes-abonnements", response_model=list[AbonnementRead])
+def lister_mes_abonnements(
+    db: Session = Depends(get_db),
+    utilisateur_courant = Depends(recuperer_utilisateur_courant)
+):
+    return ServiceAbonnement.abonnements_par_utilisateur(db, utilisateur_courant.id)
 
 
 @router.get("/{abonnement_id}", response_model=AbonnementRead)
