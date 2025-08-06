@@ -19,6 +19,7 @@ class Abonnement(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     marchand_id = Column(UUID(as_uuid=True), ForeignKey("marchands.id"), nullable=False)
+    utilisateur_id = Column(UUID(as_uuid=True), ForeignKey("utilisateurs.id"), nullable=False)
     montant = Column(Float, nullable=False)
     date_debut = Column(DateTime, default=datetime.utcnow)
     date_expiration = Column(DateTime)
@@ -30,3 +31,4 @@ class Abonnement(Base):
     # transaction_id= Column(String(255), nullable=False, unique=True)
 
     marchand = relationship("Marchand", back_populates="abonnement")
+    utilisateur = relationship("Utilisateur", back_populates="abonnements")

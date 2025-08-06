@@ -32,3 +32,4 @@ class Utilisateur(Base):
     cles_api = relationship("CleAPI", back_populates="utilisateur")
     marchands = relationship("Marchand", back_populates="utilisateur")
     adresses = relationship("Adresse", back_populates="utilisateur")
+    abonnements = relationship("Abonnement", back_populates="utilisateur") 

@@ -1,5 +1,7 @@
 # services/abonnement.py
 
+from app.models.marchand import Marchand
+from app.models.utilisateur import Utilisateur
 from app.schemas.notification import NotificationCreate, TypeNotification
 from app.services.notification import creer_notification
 
@@ -46,7 +48,7 @@ class ServiceAbonnement:
         return abonnement
     
     @staticmethod
-    def souscrire_abonnement(db: Session, marchand_id: UUID, montant: float, reference_abonnement: str) -> Abonnement:
+    def souscrire_abonnement(db: Session, marchand_id: UUID, montant: float, reference_abonnement: str, utilisateur_courant: Utilisateur) -> Abonnement:
         """
         Permet à un marchand de souscrire un nouvel abonnement
         - Vérifie qu’il n’y a pas déjà un abonnement actif
@@ -66,11 +68,12 @@ class ServiceAbonnement:
 
         # Dates
         date_debut = datetime.utcnow()
-        date_expiration = date_debut + timedelta(days=30)
+        date_expiration = date_debut + timedelta(days=365)  # Durée de 365 jours
 
         # Création de l'abonnement
         nouvel_abonnement = Abonnement(
             marchand_id=marchand_id,
+            utilisateur_id=utilisateur_courant.id,
             montant=montant,
             date_debut=date_debut,
             date_expiration=date_expiration,
@@ -95,11 +98,11 @@ class ServiceAbonnement:
         
         # Création de la notification
         notif = NotificationCreate(
-            user_id=marchand_id,
-            user_type="marchand",
-            titre="Abonnement activé",
-            message=f"Votre abonnement a été activé pour 30 jours.",
-            type=TypeNotification.success
+        user_id=utilisateur_courant.id,
+        user_type="utilisateur",
+        titre="Abonnement activé",
+        message=f"Votre abonnement pour le marchand {marchand_id} a été activé pour 365 jours.",
+        type=TypeNotification.success
         )
         creer_notification(db, notif)
 

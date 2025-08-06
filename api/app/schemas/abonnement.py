@@ -19,10 +19,12 @@ class AbonnementCreate(BaseModel):
     montant: float
     duree_jours: int = 365  
     reference_abonnement: str
+    utilisateur_id: UUID
 
 class AbonnementRead(BaseModel):
     id: UUID
     marchand_id: UUID
+    utilisateur_id: UUID
     montant: float
     date_debut: datetime
     date_expiration: datetime

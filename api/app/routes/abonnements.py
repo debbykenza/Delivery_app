@@ -4,6 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
+from app.dependencies.auth import recuperer_utilisateur_courant
 from app.services.abonnement import ServiceAbonnement
 from app.schemas.abonnement import AbonnementCreate, AbonnementRead, AbonnementUpdate
 from app.core.database import get_db
@@ -37,12 +38,13 @@ def souscrire_abonnement(
     marchand_id: UUID,
     montant: float,
     reference_abonnement: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    utilisateur_courant = Depends(recuperer_utilisateur_courant)
 ):
     """
     Permet à un marchand de souscrire à un abonnement standard de 30 jours.
     """
-    abonnement = ServiceAbonnement.souscrire_abonnement(db, marchand_id, montant, reference_abonnement)
+    abonnement = ServiceAbonnement.souscrire_abonnement(db, marchand_id, montant, reference_abonnement, utilisateur_courant=utilisateur_courant)
 
     return {
         "message": "Abonnement souscrit avec succès",
@@ -51,6 +53,8 @@ def souscrire_abonnement(
         "date_expiration": abonnement.date_expiration.strftime("%d-%m-%Y %H:%M:%S"),
         "reference_abonnement": abonnement.reference_abonnement,
         "marchand_id": abonnement.marchand_id,
+        "utilisateur_id": abonnement.utilisateur_id,
+        
     }
 
 
