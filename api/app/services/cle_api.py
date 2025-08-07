@@ -87,6 +87,28 @@ def creer_cle(db: Session, data: CleAPICreate) -> CleAPIResponse:
         date_creation=cle_api.date_creation
     )
 
+def recuperer_toutes_les_cles(db: Session) -> list[CleAPIResponse]:
+    """Retourne toutes les clés API de la base de données"""
+    cles = db.query(CleAPI).all()
+    result = []
+
+    for cle in cles:
+        # Récupérer le nom du marchand
+        marchand = db.query(Marchand).filter(Marchand.id == cle.marchand_id).first()
+
+        result.append(CleAPIResponse(
+            id=cle.id,
+            nom=cle.nom,
+            cle=cle.cle,
+            utilisateur_id=cle.utilisateur_id,
+            marchand_nom=marchand.nom if marchand else None,
+            est_active=cle.est_active,
+            date_creation=cle.date_creation
+        ))
+    
+    return result
+
+
 def recuperer_cles_par_utilisateur(db: Session, utilisateur_id: UUID) -> list[CleAPIResponse]:
     """Récupérer toutes les clés API d'un utilisateur avec les noms des marchands"""
     cles = db.query(CleAPI).filter(CleAPI.utilisateur_id == utilisateur_id).all()

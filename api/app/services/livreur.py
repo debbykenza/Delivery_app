@@ -57,6 +57,7 @@ class LivreurService:
 
 
 
+
     @staticmethod
     def modifier_livreur(db: Session, livreur_id: UUID, update_data: LivreurUpdate) -> LivreurModel:
         livreur = db.query(LivreurModel).filter(LivreurModel.id == livreur_id).first()

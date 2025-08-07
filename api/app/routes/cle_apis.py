@@ -56,6 +56,19 @@ def creer_cle_api(
     payload.utilisateur_id = current_user.id
     return creer_cle(db, payload)
 
+@router.get("/toutes", response_model=list[CleAPIResponse])
+def get_toutes_cles_api(
+    db: Session = Depends(get_db),
+    current_user = Depends(recuperer_utilisateur_courant)
+):
+    # Vérification simple : seules certaines personnes peuvent voir toutes les clés (ex: admin)
+    if not current_user.role == "admin" :
+        raise HTTPException(status_code=403, detail="Accès refusé")
+
+    return recuperer_toutes_les_cles(db)
+
+
+
 @router.put("/modifier/{cle_id}", response_model=CleAPIResponse)
 def modifier_cle_api(
     cle_id: UUID,
