@@ -7,11 +7,11 @@ from app.core.security import verify_access_token  # tu peux renommer la fonctio
 from app.core.database import SessionLocal
 from app.models.utilisateur import Utilisateur, Role
 
-# 🛡️ Schéma d'authentification (HTTP Bearer Token)
+# Schéma d'authentification (HTTP Bearer Token)
 schema_authentification = HTTPBearer()
 
 
-# 📦 Connexion à la base de données
+#  Connexion à la base de données
 def recuperer_db():
     db = SessionLocal()
     try:
@@ -20,7 +20,7 @@ def recuperer_db():
         db.close()
 
 
-# 👤 Récupération de l'utilisateur courant à partir du token
+#  Récupération de l'utilisateur courant à partir du token
 def recuperer_utilisateur_courant(
     identifiants: HTTPAuthorizationCredentials = Depends(schema_authentification),
     db: Session = Depends(recuperer_db)
@@ -52,27 +52,27 @@ def recuperer_utilisateur_courant(
     return utilisateur
 
 
-# 🛡️ Dépendance pour vérifier le rôle de l'utilisateur
+#  Dépendance pour vérifier le rôle de l'utilisateur
 
-# 🔐 Accès réservé à l'administrateur
+#  Accès réservé à l'administrateur
 def exiger_admin(utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant)):
     if utilisateur.role != Role.admin:
         raise HTTPException(status_code=403, detail="Accès réservé à l'administrateur.")
     return utilisateur
 
-# 🔐 Accès réservé au livreur
+#  Accès réservé au livreur
 def exiger_livreur(utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant)):
     if utilisateur.role != Role.livreur:
         raise HTTPException(status_code=403, detail="Accès réservé aux livreurs.")
     return utilisateur
 
-# 🔐 Accès réservé au marchand
+#  Accès réservé au marchand
 def exiger_marchand(utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant)):
     if utilisateur.role != Role.marchand:
         raise HTTPException(status_code=403, detail="Accès réservé aux marchands.")
     return utilisateur
 
-# 🔐 Accès réservé aux utilisateurs standards
+#  Accès réservé aux utilisateurs standards
 def exiger_utilisateur(utilisateur: Utilisateur = Depends(recuperer_utilisateur_courant)):
     if utilisateur.role != Role.utilisateur:
         raise HTTPException(status_code=403, detail="Accès réservé aux utilisateurs.")

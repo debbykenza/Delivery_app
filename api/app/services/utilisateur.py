@@ -66,7 +66,7 @@ def authentifier_utilisateur(db: Session, email: str, mot_de_passe: str) -> Util
         creer_notification(db, notif)
         return None
 
-    # 🔓 Connexion réussie ➜ notification "succès"
+    #  Connexion réussie ➜ notification "succès"
     notif = NotificationCreate(
         user_id=utilisateur.id,
         user_type="utilisateur",
@@ -76,7 +76,7 @@ def authentifier_utilisateur(db: Session, email: str, mot_de_passe: str) -> Util
     )
     creer_notification(db, notif)
     
-    # 🔔 Notification après authentification réussie
+    #  Notification après authentification réussie
     notif = NotificationCreate(
         user_id=utilisateur.id,
         user_type="utilisateur",

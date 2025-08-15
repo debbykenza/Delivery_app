@@ -16,6 +16,9 @@ router = APIRouter(prefix="/livraisons", tags=["Livraisons"])
 def creer_livraison(livraison: LivraisonCreate, db: Session = Depends(get_db)):
     return LivraisonService.creer_livraison(db, livraison)
 
+@router.get("/", response_model=List[LivraisonRead])
+def lister_livraisons(db: Session = Depends(get_db)):
+    return LivraisonService.obtenir_livraison(db)
 
 @router.get("/suivre/{livraison_id}")
 def obtenir_livraison(livraison_id: UUID, db: Session = Depends(get_db)):

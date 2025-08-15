@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.dependencies.auth import recuperer_utilisateur_courant
 from app.models.utilisateur import Utilisateur
 from app.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UtilisateurResponse
+from app.services.utilisateur import recuperer_utilisateur_par_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -19,6 +20,14 @@ def inscription_utilisateur(
     Endpoint to register a new user.
     """
     from app.services.utilisateur import creer_utilisateur 
+    
+    # Vérifier si l'email existe déjà
+    existing_user = recuperer_utilisateur_par_email(db, user_data.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="Un utilisateur existe déjà avec cet email"
+        )
     
     nouvel_utilisateur = creer_utilisateur(db, user_data)
 
