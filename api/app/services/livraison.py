@@ -43,6 +43,10 @@ class LivraisonService:
     @staticmethod
     def obtenir_livraison(db: Session, livraison_id: UUID):
         return db.query(Livraison).filter(Livraison.id == livraison_id).first()
+    
+    @staticmethod
+    def obtenir_livraisons(db: Session):
+        return db.query(Livraison).all()
 
     @staticmethod
     def accepter_livraison(db: Session, livraison_id: UUID, livreur_id: UUID):

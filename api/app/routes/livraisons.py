@@ -18,7 +18,7 @@ def creer_livraison(livraison: LivraisonCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[LivraisonRead])
 def lister_livraisons(db: Session = Depends(get_db)):
-    return LivraisonService.obtenir_livraison(db)
+    return LivraisonService.obtenir_livraisons(db)
 
 @router.get("/suivre/{livraison_id}")
 def obtenir_livraison(livraison_id: UUID, db: Session = Depends(get_db)):

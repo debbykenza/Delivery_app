@@ -12,7 +12,7 @@ from fastapi import HTTPException
 from app.models.adresse import Adresse
 from app.schemas.adresse import AdresseCreate, AdresseRead
 
-# ✅ Fonction utilitaire : conversion WKT → GeoJSON
+#  Fonction utilitaire : conversion WKT → GeoJSON
 def wkt_to_geojson(wkt_string):
     shape = wkt.loads(wkt_string)
     return {
@@ -24,7 +24,7 @@ def wkt_to_geojson(wkt_string):
 class ServiceAdresse:
     @staticmethod
     def creer_adresse(db: Session, adresse_data: AdresseCreate) -> Adresse:
-        # 🛑 Vérification : un seul ID doit être fourni
+        #  Vérification : un seul ID doit être fourni
         liens = [
             adresse_data.utilisateur_id,
             adresse_data.marchand_id,
@@ -38,13 +38,13 @@ class ServiceAdresse:
                 detail="Une seule des relations (utilisateur, marchand, livreur ou client) doit être renseignée."
             )
 
-        # 🧭 Conversion des géométries WKT
+        #  Conversion des géométries WKT
         point_geom = from_shape(wkt.loads(adresse_data.position_point_wkt), srid=4326)
         poly_geom = None
         if adresse_data.zone_polygone_wkt:
             poly_geom = from_shape(wkt.loads(adresse_data.zone_polygone_wkt), srid=4326)
 
-        # ✅ Création de l'adresse
+        #  Création de l'adresse
         adresse = Adresse(
             pays=adresse_data.pays,
             ville=adresse_data.ville,
@@ -59,7 +59,7 @@ class ServiceAdresse:
         db.commit()
         db.refresh(adresse)
         
-        # ➤ Détermination du propriétaire de l'adresse
+        #  Détermination du propriétaire de l'adresse
         cible_id = adresse.utilisateur_id or adresse.client_id or adresse.livreur_id or adresse.marchand_id
         cible_type = (
             "utilisateur" if adresse.utilisateur_id else
