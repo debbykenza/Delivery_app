@@ -20,9 +20,9 @@ class Utilisateur(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     nom = Column(String)
     email = Column(String, unique=True)
-    mot_de_passe = Column(String, nullable=True)  # Nullable si utilisation de Supabase pour l'auth
-    is_active = Column(Boolean, default=True)     # Pour gérer l'activation des comptes
-    role = Column(Enum(Role), nullable=False)  # ✅ Utilise SQLAlchemy.Enum
+    mot_de_passe = Column(String, nullable=True)  
+    is_active = Column(Boolean, default=True)     
+    role = Column(Enum(Role), nullable=False)  
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_mise_a_jour = Column(DateTime(timezone=True), onupdate=func.now())
 

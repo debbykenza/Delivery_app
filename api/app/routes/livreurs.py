@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
 
@@ -13,6 +13,37 @@ router = APIRouter(prefix="/livreurs", tags=["Livreurs"])
 @router.post("/", response_model=LivreurRead, status_code=status.HTTP_201_CREATED)
 def creer_livreur(livreur: LivreurCreate, db: Session = Depends(get_db)):
     return LivreurService.creer_livreur(db, livreur)
+
+
+# Connexion du livreur
+@router.post("/connexion")
+def connexion_livreur(
+    contact: str = Body(..., embed=True),  # Ajoutez embed=True pour les corps simples
+    mot_de_passe: str = Body(..., embed=True), 
+    db: Session = Depends(get_db)
+):
+    livreur = LivreurService.authentifier_livreur(db, contact, mot_de_passe)
+    if not livreur:
+        raise HTTPException(status_code=401, detail="Échec d'authentification")
+    return {"message": "Connexion réussie", "livreur": livreur}
+
+
+# Activer un livreur (par l’admin)
+@router.put("/{livreur_id}/activer")
+def activer_livreur(livreur_id: UUID, db: Session = Depends(get_db)):
+    livreur = LivreurService.activer_livreur(db, livreur_id)
+    if not livreur:
+        raise HTTPException(status_code=404, detail="Livreur non trouvé")
+    return {"message": "Livreur activé avec succès", "livreur": livreur}
+
+
+# Désactiver un livreur (par l’admin)
+@router.put("/{livreur_id}/desactiver")
+def desactiver_livreur(livreur_id: UUID, db: Session = Depends(get_db)):
+    livreur = LivreurService.desactiver_livreur(db, livreur_id)
+    if not livreur:
+        raise HTTPException(status_code=404, detail="Livreur non trouvé")
+    return {"message": "Livreur désactivé avec succès", "livreur": livreur}
 
 @router.patch("/{livreur_id}/modifier", response_model=LivreurRead)
 def modifier_livreur(livreur_id: UUID, update: LivreurUpdate, db: Session = Depends(get_db)):

@@ -10,13 +10,15 @@ class Livreur(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     nom = Column(String)
-    vehicule = Column(Enum("moto", "voiture", "camion", name="type_vehicule"))
+    vehicule = Column(Enum("moto", "voiture", "camion", "tricycle", name="type_vehicule"))
+    mot_de_passe = Column(String, nullable=True) 
+    est_actif = Column(Boolean, default=False)
     contact = Column(String)
     immatriculation = Column(String)
     statut = Column(Enum("disponible", "indisponible", name="statut_livreur"))
-    # est_disponible = Column(Boolean, default=True)
+   
     date_creation = Column(DateTime, default=datetime.utcnow)
     livraisons = relationship("Livraison", back_populates="livreur")
     avis = relationship("Avis", back_populates="livreur")
-    positions = relationship("Position", back_populates="livreur")  # dans Livreur
+    positions = relationship("Position", back_populates="livreur")  
     adresses = relationship("Adresse", back_populates="livreur")

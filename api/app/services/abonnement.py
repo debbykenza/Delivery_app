@@ -14,6 +14,7 @@ from app.models.abonnement import Abonnement, StatutAbonnement
 from app.schemas.abonnement import AbonnementCreate, AbonnementUpdate
 from app.core.database import get_db
 from datetime import timezone
+from taches import update_transaction_statuses
 
 
 
@@ -105,6 +106,8 @@ class ServiceAbonnement:
         type=TypeNotification.success
         )
         creer_notification(db, notif)
+        update_transaction_statuses()
+        
 
         return nouvel_abonnement
 

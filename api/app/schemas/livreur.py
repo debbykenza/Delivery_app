@@ -3,11 +3,11 @@ from uuid import UUID
 from enum import Enum
 from pydantic import BaseModel, Field
 
-
 class TypeVehicule(str, Enum):
     moto = "moto"
     voiture = "voiture"
     camion = "camion"
+    tricycle = "tricycle"
 
 
 class StatutLivreur(str, Enum):
@@ -20,6 +20,8 @@ class LivreurBase(BaseModel):
     vehicule: TypeVehicule
     contact: str
     immatriculation: str
+    mot_de_passe: str
+    est_actif: bool = False
     statut: StatutLivreur = StatutLivreur.disponible
     # est_disponible: bool = True
 
