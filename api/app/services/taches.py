@@ -2,7 +2,7 @@ from os import getenv
 import os
 import requests
 from gotrue import Session
-from app.models.abonnement import Abonnement
+from app.models.abonnement import Abonnement, StatutAbonnement
 from app.core.database import SessionLocal
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -34,9 +34,7 @@ def update_transaction_statuses():
     
     marchands = db.query(Marchand).filter(Marchand.status == "inactif").all()
     
-    
-    
-    abonnements = db.query(Abonnement).filter(Abonnement.statut == "inactif").all()
+    abonnements = db.query(Abonnement).filter(Abonnement.statut == StatutAbonnement.inactif).all()
     print(f"Vérification des transactions pour {len(abonnements)} abonnements inactifs...")
     
     for ab in abonnements:
@@ -51,7 +49,8 @@ def update_transaction_statuses():
 
             if status == 0:  # Paiement réussi
                 print(f"Paiement confirmé pour l'abonnement {ab.id}")
-                ab.statut = "actif"
+                # ab.statut = "actif"
+                ab.statut = StatutAbonnement.actif
                 
                 db.commit()
 
