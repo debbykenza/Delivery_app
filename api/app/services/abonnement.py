@@ -14,7 +14,7 @@ from app.models.abonnement import Abonnement, StatutAbonnement
 from app.schemas.abonnement import AbonnementCreate, AbonnementUpdate
 from app.core.database import get_db
 from datetime import timezone
-from taches import update_transaction_statuses
+from app.services.taches import update_transaction_statuses
 
 
 
