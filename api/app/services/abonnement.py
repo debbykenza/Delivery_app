@@ -106,8 +106,7 @@ class ServiceAbonnement:
         type=TypeNotification.success
         )
         creer_notification(db, notif)
-        update_transaction_statuses()
-        
+        # update_transaction_statuses()
 
         return nouvel_abonnement
 

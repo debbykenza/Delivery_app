@@ -10,15 +10,17 @@ from app.models.marchand import Marchand  # Import manquant ajouté ici
 
 
 def check_transaction_status(tx_ref: str):
-    url = "https://paygateglobal.com/api/v2/status"
+    url = "https://paygateglobal.com/api/v1/status"
     payload = {
         "auth_token": os.getenv("API_PAYGATE"),
-        "identifier": tx_ref
+        "tx_reference": tx_ref
     }
     try:
         response = requests.post(url, json=payload)
-        print(f"[DEBUG] Réponse de l'API de vérification: {response.text}")
+        print(f"[DEBUG1] Réponse de l'API de vérification: {response}")
+        print(f"[DEBUG2] Réponse de l'API de vérification: {response.text}")
         if response.status_code == 200:
+            print(f"[DEBUG3] Réponse de l'API de vérification: {response.json()}")
             return response.json()
         else:
             print(f"[ERREUR] Statut HTTP: {response.status_code}")
