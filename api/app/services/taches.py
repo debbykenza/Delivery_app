@@ -17,10 +17,10 @@ def check_transaction_status(tx_ref: str):
     }
     try:
         response = requests.post(url, json=payload)
-        print(f"[DEBUG1] Réponse de l'API de vérification: {response}")
-        print(f"[DEBUG2] Réponse de l'API de vérification: {response.text}")
+        # print(f"[DEBUG1] Réponse de l'API de vérification: {response}")
+        print(f"[DEBUG] Réponse de l'API de vérification: {response.text}")
         if response.status_code == 200:
-            print(f"[DEBUG3] Réponse de l'API de vérification: {response.json()}")
+            # print(f"[DEBUG3] Réponse de l'API de vérification: {response.json()}")
             return response.json()
         else:
             print(f"[ERREUR] Statut HTTP: {response.status_code}")
@@ -50,7 +50,9 @@ def update_transaction_statuses():
             if status == 0:  # Paiement réussi
                 print(f"Paiement confirmé pour l'abonnement {ab.id}")
                 # ab.statut = "actif"
+                # print(f"Statut de l'abonnement 1 : {ab.statut}")
                 ab.statut = StatutAbonnement.actif
+                # print(f"Statut de l'abonnement 2 : {ab.statut}")
                 
                 db.commit()
 
@@ -61,5 +63,5 @@ scheduler = BackgroundScheduler()
 
 def start_payment_checker():
     if not scheduler.running:
-        scheduler.add_job(update_transaction_statuses, 'interval', seconds=10)
+        scheduler.add_job(update_transaction_statuses, 'interval', seconds=15)
         scheduler.start()

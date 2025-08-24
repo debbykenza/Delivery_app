@@ -158,8 +158,6 @@ class LivreurService:
         return db.query(LivreurModel).all()
 
 
-
-
     @staticmethod
     def modifier_livreur(db: Session, livreur_id: UUID, update_data: LivreurUpdate) -> LivreurModel:
         livreur = db.query(LivreurModel).filter(LivreurModel.id == livreur_id).first()
@@ -204,4 +202,7 @@ class LivreurService:
         commande = db.query(Commande).filter(Commande.id == commande_id).first()
         return commande
     
-    
+    @staticmethod
+    def verifier_contact_existe(db: Session, contact: str) -> bool:
+        livreur = db.query(LivreurModel).filter(LivreurModel.contact == contact).first()
+        return livreur is not None

@@ -127,3 +127,14 @@ class NotificationFilter(BaseModel):
     type_notification: Optional[TypeNotification] = None
     limite: Optional[int] = Field(default=50, ge=1, le=100)
     depuis_jours: Optional[int] = Field(default=None, ge=1, le=365)
+    
+class NotificationOut(BaseModel):
+    id: UUID
+    titre: str
+    message: str
+    type: TypeNotification
+    lu: bool
+    date_envoi: datetime
+
+    class Config:
+        orm_mode = True

@@ -123,3 +123,9 @@ def voir_historique_livraisons(livreur_id: UUID, db: Session = Depends(get_db)):
 # @router.get("/rechercher/")
 # def rechercher_livraisons(mot_cle: str, db: Session = Depends(get_db)):
 #     return LivraisonService.rechercher_livraisons(db, mot_cle)
+
+
+@router.get("/contact/{contact}/existe")
+def verifier_contact_existe(contact: str, db: Session = Depends(get_db)):
+    existe = LivreurService.verifier_contact_existe(db, contact)
+    return {"existe": existe}

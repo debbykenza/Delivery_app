@@ -51,8 +51,12 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
 
+from app.dependencies.auth import recuperer_utilisateur_courant
+from app.models.notification import Notification
+from app.models.utilisateur import Utilisateur
 from app.schemas.notification import (
-    NotificationCreate, 
+    NotificationCreate,
+    NotificationOut, 
     NotificationRead, 
     NotificationUpdate,
     TypeNotification
@@ -267,3 +271,18 @@ def marquer_notification_comme_lue_legacy(
     if not notif:
         raise HTTPException(status_code=404, detail="Notification non trouvée")
     return notif
+
+
+@router.get("/mes-notifications", response_model=list[NotificationOut])
+def get_mes_notifications(
+    last_id: int = 0,  # pour récupérer seulement les nouvelles
+    db: Session = Depends(get_db),
+    current_user: Utilisateur = Depends(recuperer_utilisateur_courant),
+):
+    # Sélectionner uniquement les notifications destinées à l'utilisateur
+    query = db.query(Notification).filter(Notification.user_id == current_user.id)
+
+    if last_id > 0:
+        query = query.filter(Notification.id > last_id)  # seulement les nouvelles
+
+    return query.order_by(Notification.date_envoi.desc()).all()

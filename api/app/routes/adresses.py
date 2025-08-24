@@ -7,7 +7,7 @@ from app.services.adresse import ServiceAdresse
 
 router = APIRouter(prefix="/adresses", tags=["Adresses"])
 
-# ✅ Créer une adresse
+#  Créer une adresse
 @router.post("/", status_code=201)
 def creer_adresse(adresse_data: AdresseCreate, db: Session = Depends(get_db)):
     adresse = ServiceAdresse.creer_adresse(db, adresse_data)
@@ -16,7 +16,7 @@ def creer_adresse(adresse_data: AdresseCreate, db: Session = Depends(get_db)):
         "adresse": AdresseRead.from_orm(adresse)
     }
 
-# ✅ Modifier une adresse
+#  Modifier une adresse
 @router.put("/{adresse_id}", status_code=200)
 def modifier_adresse(
     adresse_id: str,
@@ -30,7 +30,7 @@ def modifier_adresse(
         "message": "Adresse modifiée avec succès",
         "adresse": AdresseRead.from_orm(adresse)
     }
-# ✅ Supprimer une adresse
+#  Supprimer une adresse
 @router.delete("/{adresse_id}", status_code=200)
 def supprimer_adresse(adresse_id: str, db: Session = Depends(get_db)):
     success = ServiceAdresse.supprimer_adresse(db, adresse_id)
@@ -38,32 +38,32 @@ def supprimer_adresse(adresse_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Adresse non trouvée")
     return {"message": "Adresse supprimée avec succès"}
 
-# ✅ Lister toutes les adresses
+#  Lister toutes les adresses
 @router.get("/", response_model=List[AdresseRead])
 def lister_adresses(db: Session = Depends(get_db)):
     return ServiceAdresse.lister_toutes_adresses(db)
 
-# ✅ Lister par client
+#  Lister par client
 @router.get("/client/{client_id}", response_model=List[AdresseRead])
 def lister_adresses_client(client_id: str, db: Session = Depends(get_db)):
     return ServiceAdresse.lister_adresses_par_client(db, client_id)
 
-# ✅ Lister par livreur
+#  Lister par livreur
 @router.get("/livreur/{livreur_id}", response_model=List[AdresseRead])
 def lister_adresses_livreur(livreur_id: str, db: Session = Depends(get_db)):
     return ServiceAdresse.lister_adresses_par_livreur(db, livreur_id)
 
-# ✅ Lister par marchand
+#  Lister par marchand
 @router.get("/marchand/{marchand_id}", response_model=List[AdresseRead])
 def lister_adresses_marchand(marchand_id: str, db: Session = Depends(get_db)):
     return ServiceAdresse.lister_adresses_par_marchand(db, marchand_id)
 
-# ✅ Lister par utilisateur
+#  Lister par utilisateur
 @router.get("/utilisateur/{utilisateur_id}", response_model=List[AdresseRead])
 def lister_adresses_utilisateur(utilisateur_id: str, db: Session = Depends(get_db)):
     return ServiceAdresse.lister_adresses_par_utilisateur(db, utilisateur_id)
 
-# ✅ Récupérer le polygone au format GeoJSON
+#  Récupérer le polygone au format GeoJSON
 @router.get("/{adresse_id}/zone/geojson")
 def get_zone_geojson(adresse_id: str, db: Session = Depends(get_db)):
     geojson = ServiceAdresse.get_zone_polygone_geojson(db, adresse_id)
@@ -71,7 +71,7 @@ def get_zone_geojson(adresse_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Zone non trouvée")
     return geojson
 
-# ✅ Récupérer le point au format GeoJSON
+#  Récupérer le point au format GeoJSON
 @router.get("/{adresse_id}/point/geojson")
 def get_position_point_geojson(adresse_id: str, db: Session = Depends(get_db)):
     geojson = ServiceAdresse.get_position_point_geojson(db, adresse_id)
