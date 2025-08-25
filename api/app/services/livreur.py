@@ -37,17 +37,17 @@ class LivreurService:
     def authentifier_livreur(db: Session, contact: str, mot_de_passe: str) -> LivreurModel | None:
         livreur = db.query(LivreurModel).filter(LivreurModel.contact == contact).first()
 
-        # if not livreur:
-        #     # Email non trouvé ➜ notification "échec"
-        #     notif = NotificationCreate(
-        #         user_id=None,
-        #         user_type="livreur",
-        #         titre="Échec de connexion",
-        #         message=f"Aucun compte n'est associé à ce numéro.",
-        #         type=TypeNotification.error
-        #     )
-        #     creer_notification(db, notif)
-        #     return None
+        if not livreur:
+            # Email non trouvé ➜ notification "échec"
+            notif = NotificationCreate(
+                user_id=None,
+                user_type="livreur",
+                titre="Échec de connexion",
+                message=f"Aucun compte n'est associé à ce numéro.",
+                type=TypeNotification.error
+            )
+            creer_notification(db, notif)
+            return None
 
         if not livreur.mot_de_passe or not bcrypt.checkpw(mot_de_passe.encode('utf-8'), livreur.mot_de_passe.encode('utf-8')):
             # Mot de passe incorrect ➜ notification "échec"
