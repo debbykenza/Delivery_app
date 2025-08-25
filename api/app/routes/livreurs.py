@@ -15,17 +15,69 @@ def creer_livreur(livreur: LivreurCreate, db: Session = Depends(get_db)):
     return LivreurService.creer_livreur(db, livreur)
 
 
-# Connexion du livreur
+# # Connexion du livreur
+# @router.post("/connexion")
+# def connexion_livreur(
+#     contact: str = Body(..., embed=True),  # Ajoutez embed=True pour les corps simples
+#     mot_de_passe: str = Body(..., embed=True), 
+#     db: Session = Depends(get_db)
+# ):
+#     livreur = LivreurService.authentifier_livreur(db, contact, mot_de_passe)
+#     if not livreur:
+#         raise HTTPException(status_code=401, detail="Échec d'authentification")
+#     return {"message": "Connexion réussie", "livreur": livreur}
+
+# Dans votre fichier routes/livreurs.py
+
 @router.post("/connexion")
 def connexion_livreur(
-    contact: str = Body(..., embed=True),  # Ajoutez embed=True pour les corps simples
+    contact: str = Body(..., embed=True),
     mot_de_passe: str = Body(..., embed=True), 
     db: Session = Depends(get_db)
 ):
-    livreur = LivreurService.authentifier_livreur(db, contact, mot_de_passe)
-    if not livreur:
-        raise HTTPException(status_code=401, detail="Échec d'authentification")
-    return {"message": "Connexion réussie", "livreur": livreur}
+    try:
+        print(f"Tentative de connexion - Contact: {contact}")
+        
+        livreur = LivreurService.authentifier_livreur(db, contact, mot_de_passe)
+        
+        if not livreur:
+            print("Échec d'authentification")
+            return {
+                "success": False,
+                "message": "Identifiants incorrects ou compte inexistant"
+            }
+        
+        print(f"Authentification réussie pour: {livreur.nom}")
+        
+        # Vérifier si le compte est activé
+        if not livreur.est_actif:
+            print(f"Compte non activé pour: {livreur.nom}")
+            return {
+                "success": False,
+                "message": "Votre compte n'est pas encore activé. Contactez l'administrateur."
+            }
+        
+        # Retourner les informations du livreur
+        return {
+            "message": "Connexion réussie",
+            "livreur": {
+                "id": str(livreur.id),
+                "nom": livreur.nom,
+                "contact": livreur.contact,
+                "vehicule": livreur.vehicule,
+                "statut": livreur.statut,
+                "immatriculation": livreur.immatriculation,
+                "est_actif": livreur.est_actif,
+                "date_creation": livreur.date_creation.isoformat()
+            }
+        }
+        
+    except Exception as e:
+        print(f"Erreur dans la route de connexion: {str(e)}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Erreur interne du serveur: {str(e)}"
+        )
 
 
 # Activer un livreur (par l’admin)
