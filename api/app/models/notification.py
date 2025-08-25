@@ -15,7 +15,7 @@ class TypeNotification(str, PyEnum):
 class Notification(Base):
     __tablename__ = "notifications"
     id = Column(SQLUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(SQLUUID(as_uuid=True), nullable=False)
+    user_id = Column(SQLUUID(as_uuid=True), nullable=True)
     user_type = Column(String, nullable=False)
     titre = Column(String, nullable=False)
     message = Column(String, nullable=False)

@@ -58,7 +58,7 @@ class TypeNotification(str, Enum):
 
 class NotificationBase(BaseModel):
     user_id: UUID
-    user_type: str = Field(..., description="Type d'utilisateur: client, marchand, livreur, admin")
+    user_type: str = Field(..., description="Type d'utilisateur: marchand, livreur, admin")
     titre: str = Field(..., min_length=1, max_length=200, description="Titre de la notification")
     message: str = Field(..., min_length=1, max_length=1000, description="Message de la notification")
     type: TypeNotification = Field(default=TypeNotification.info, description="Type de notification")
