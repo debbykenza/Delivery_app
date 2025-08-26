@@ -5,14 +5,14 @@ from app.models.position import Position
 
 class PositionCreate(BaseModel):
     livreur_id: UUID
-    livraison_id: UUID
+    # livraison_id: UUID
     latitude: float
     longitude: float
 
 class PositionOut(BaseModel):
     id: UUID
     livreur_id: UUID
-    livraison_id: UUID
+    # livraison_id: UUID
     latitude: float
     longitude: float
     timestamp: datetime
