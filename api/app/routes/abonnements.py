@@ -106,4 +106,35 @@ def supprimer_abonnement(abonnement_id: UUID, db: Session = Depends(get_db)):
 #     return {"message": "Vérification des abonnements terminée"}
 
 
+@router.post(
+    "/abonnements/{abonnement_id}/activer",
+    response_model=AbonnementRead,
+    summary="Activer un abonnement inactif",
+    description="Permet d'activer un abonnement qui est actuellement inactif"
+)
+async def activer_abonnement(
+    abonnement_id: UUID,
+    db: Session = Depends(get_db),
+    # utilisateur_courant = Depends(recuperer_utilisateur_courant)
+):
+    """
+    Active un abonnement inactif.
+    
+    - **abonnement_id**: UUID de l'abonnement à activer
+    """
+    try:
+        abonnement = ServiceAbonnement.activer_abonnement(
+            db=db, 
+            abonnement_id=abonnement_id
+        )
+        return abonnement
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de l'activation de l'abonnement: {str(e)}"
+        )
+
+
 

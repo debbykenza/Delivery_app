@@ -181,7 +181,6 @@ class ServiceCommande:
             client_id=donnees_commande.client_id
         )
 
-
         db.add(commande)
         db.commit()
         db.refresh(commande)
@@ -320,3 +319,66 @@ class ServiceCommande:
         ).filter(Commande.id == commande_id).first()
         
         return result
+    
+    # Dans ServiceCommande, ajoutez ces méthodes
+@classmethod
+def obtenir_commandes_completes(cls, db: Session, marchand_id: str = None):
+    """
+    Récupère toutes les commandes avec leurs relations en une seule requête SQL
+    """
+    from app.models.marchand import Marchand  # Import ici pour éviter les imports circulaires
+    
+    query = db.query(Commande).options(
+        # Utiliser joinedload pour charger les relations en une seule requête
+        joinedload(Commande.client),
+        joinedload(Commande.marchand)
+    )
+    
+    if marchand_id:
+        query = query.filter(Commande.marchand_id == marchand_id)
+    
+    return query.all()
+
+@classmethod
+def obtenir_commandes_paginated(
+    cls, 
+    db: Session, 
+    page: int = 1, 
+    limit: int = 20,
+    marchand_id: str = None,
+    reference: str = None,
+    statut: str = None
+):
+    """
+    Récupère les commandes avec pagination et filtres côté serveur
+    """
+    from app.models.marchand import Marchand
+    
+    # Requête de base avec relations
+    query = db.query(Commande).options(
+        joinedload(Commande.client),
+        joinedload(Commande.marchand)
+    )
+    
+    # Appliquer les filtres
+    if marchand_id:
+        query = query.filter(Commande.marchand_id == marchand_id)
+    if reference:
+        query = query.filter(Commande.reference.ilike(f"%{reference}%"))
+    if statut:
+        query = query.filter(Commande.statut == statut)
+    
+    # Compter le total
+    total = query.count()
+    
+    # Appliquer la pagination
+    offset = (page - 1) * limit
+    items = query.offset(offset).limit(limit).all()
+    
+    return {
+        "data": items,
+        "total": total,
+        "page": page,
+        "totalPages": (total + limit - 1) // limit,
+        "limit": limit
+    }

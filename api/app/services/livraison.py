@@ -313,12 +313,12 @@ class LivraisonService:
         db.commit()
         db.refresh(livraison)
         
-        # ✅ Récupération du marchand via la commande
+        #  Récupération du marchand via la commande
         commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
         if not commande:
             raise HTTPException(status_code=404, detail="Commande introuvable")
         
-        # 🔔 Client
+        #  Client
         notif_client = NotificationCreate(
             user_id=commande.client_id,
             user_type="client",
@@ -328,7 +328,7 @@ class LivraisonService:
         )
         creer_notification(db, notif_client)
 
-        # 🔔 Marchand
+        #  Marchand
         notif_marchand = NotificationCreate(
             user_id=commande.marchand_id,
             user_type="marchand",
@@ -338,7 +338,7 @@ class LivraisonService:
         )
         creer_notification(db, notif_marchand)
 
-        # 🔔 Livreur
+        #  Livreur
         if livraison.livreur_id:
             notif_livreur = NotificationCreate(
                 user_id=livraison.livreur_id,
@@ -356,7 +356,7 @@ class LivraisonService:
         if not livraison:
             raise HTTPException(status_code=404, detail="Livraison introuvable")
         
-        # ✅ Récupération du marchand via la commande
+        #  Récupération du marchand via la commande
         commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
         if not commande:
             raise HTTPException(status_code=404, detail="Commande introuvable")

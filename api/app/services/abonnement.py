@@ -3,6 +3,7 @@
 from app.models.marchand import Marchand
 from app.models.utilisateur import Utilisateur
 from app.schemas.notification import NotificationCreate, TypeNotification
+from app.services.marchand import obtenir_marchand
 from app.services.notification import creer_notification
 
 
@@ -14,8 +15,6 @@ from app.models.abonnement import Abonnement, StatutAbonnement
 from app.schemas.abonnement import AbonnementCreate, AbonnementUpdate
 from app.core.database import get_db
 from datetime import timezone
-from app.services.taches import update_transaction_statuses
-
 
 
 class ServiceAbonnement:
@@ -224,3 +223,65 @@ class ServiceAbonnement:
             .order_by(Abonnement.date_debut.desc())\
             .all()
 
+    
+    @staticmethod
+    def activer_abonnement(db: Session, abonnement_id: UUID) -> Abonnement:
+        """
+        Active un abonnement inactif
+        """
+        abonnement = ServiceAbonnement.get_abonnement_par_id(db, abonnement_id)
+        
+        # Vérifier que l'abonnement est inactif
+        if abonnement.statut != StatutAbonnement.inactif:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Impossible d'activer un abonnement avec le statut {abonnement.statut.value}. Seuls les abonnements inactifs peuvent être activés."
+            )
+        
+        # Changer le statut à actif
+        abonnement.statut = StatutAbonnement.actif
+        
+        marchand_id =  abonnement.marchand_id 
+        marchand = obtenir_marchand(db, marchand_id)
+        
+        # Vérifier que le marchand est inactif
+        if marchand.status != "inactif":
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Impossible d'activer le magasin avec le statut {marchand.status}. Seuls les marchands inactifs peuvent être activés."
+            )
+        
+        # Changer le statut à actif
+        marchand.status = "actif" 
+        
+        # # Si la date d'expiration est passée, on la met à jour
+        # # Utiliser datetime.utcnow() pour éviter les problèmes de timezone
+        # if abonnement.date_expiration < datetime.utcnow():
+        #     abonnement.date_expiration = datetime.utcnow() + timedelta(days=365)
+        
+        db.commit()
+        db.refresh(abonnement)
+        
+        # Notification
+        notif = NotificationCreate(
+            user_id=abonnement.marchand_id,
+            user_type="marchand",
+            titre="Abonnement activé",
+            message=f"Votre abonnement a été activé avec succès. Date d'expiration: {abonnement.date_expiration.strftime('%d/%m/%Y')}",
+            type=TypeNotification.success
+        )
+        creer_notification(db, notif)
+        
+        # Notification à l'utilisateur si applicable
+        if abonnement.utilisateur_id:
+            notif_utilisateur = NotificationCreate(
+                user_id=abonnement.utilisateur_id,
+                user_type="utilisateur",
+                titre="Abonnement activé",
+                message=f"Votre abonnement pour le marchand a été activé avec succès.",
+                type=TypeNotification.success
+            )
+            creer_notification(db, notif_utilisateur)
+        
+        return abonnement
+            

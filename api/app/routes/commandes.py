@@ -161,7 +161,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from app.schemas.client import ClientOut
@@ -293,3 +293,32 @@ def supprimer_commande(commande_id: str, db: Session = Depends(get_db)):
 
     ServiceCommande.supprimer_commande(db, commande)
     return {"message": "Commande supprimée avec succès"}
+
+
+# nouvelles routes
+# Dans votre router commandes
+@router.get("/complete", response_model=List[CommandeRead])
+def lister_commandes_completes(
+    marchand_id: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Récupère toutes les commandes avec leurs relations (clients + marchands) en une seule requête
+    """
+    return ServiceCommande.obtenir_commandes_completes(db, marchand_id)
+
+@router.get("/paginated")
+def lister_commandes_paginated(
+    page: int = 1,
+    limit: int = 20,
+    marchand_id: Optional[str] = None,
+    reference: Optional[str] = None,
+    statut: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Récupère les commandes avec pagination côté serveur
+    """
+    return ServiceCommande.obtenir_commandes_paginated(
+        db, page, limit, marchand_id, reference, statut
+    )
