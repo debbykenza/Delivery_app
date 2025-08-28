@@ -122,3 +122,25 @@ def livraisons_client(
 ):
     """Récupère les livraisons d'un client spécifique"""
     return LivraisonService.get_livraisons_client(db, client_id, statut)
+
+@router.get("/livraisons/{livraison_id}/infos-client", response_model=dict)
+def obtenir_infos_client_livraison(
+    livraison_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Récupère les informations complètes du client associé à une livraison
+    """
+    livraison = LivraisonService.obtenir_livraison(db, livraison_id)
+    if not livraison:
+        raise HTTPException(status_code=404, detail="Livraison introuvable")
+    
+    infos_client = LivraisonService.obtenir_infos_client_par_livraison(db, livraison_id)
+    
+    if not infos_client:
+        raise HTTPException(status_code=404, detail="Informations client non trouvées")
+    
+    return {
+        "livraison_id": livraison_id,
+        "client": infos_client
+    }

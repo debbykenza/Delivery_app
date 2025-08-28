@@ -454,3 +454,31 @@ class LivraisonService:
             joinedload(Livraison.livreur)
         ).first()
 
+
+    @staticmethod
+    def obtenir_infos_client_par_livraison(db: Session, livraison_id: UUID) -> Optional[dict]:
+        """
+        Récupère les informations complètes du client associé à une livraison
+        """
+        result = (
+            db.query(
+                Client.adresse,
+                Client.nom,
+                Client.contact,
+                Client.date_creation
+            )
+            .select_from(Livraison)
+            .join(Commande, Livraison.commande_id == Commande.id)
+            .join(Client, Commande.client_id == Client.id)
+            .filter(Livraison.id == livraison_id)
+            .first()
+        )
+        
+        if result:
+            return {
+                "adresse": result.adresse,
+                "nom": result.nom,
+                "contact": result.contact,
+                "date_creation": result.date_creation
+            }
+        return None
