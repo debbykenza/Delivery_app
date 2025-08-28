@@ -57,7 +57,7 @@ class LivraisonService:
         # Vérifier si le livreur a déjà une livraison "en cours"
         livraison_existante = db.query(Livraison).filter(
             Livraison.livreur_id == livreur_id,
-            Livraison.statut == "en_cours"
+            Livraison.statut.in_(["en_cours", "acceptee"])
         ).first()
 
         if livraison_existante:
