@@ -61,3 +61,34 @@ def supprimer_client(db: Session, client_id: UUID):
         )
         creer_notification(db, notif)
     return client
+
+from sqlalchemy import UUID
+from sqlalchemy.orm import Session
+from app.models.client import Client
+from app.models.notification import TypeNotification
+from app.schemas.notification import NotificationCreate
+from app.services.notification import creer_notification
+
+
+def mettre_a_jour_adresse_client(db: Session, client_id: UUID, nouvelle_adresse: str):
+    client = db.query(Client).filter(Client.id == client_id).first()
+    if not client:
+        return None
+    
+    # Mise à jour de l'adresse
+    client.adresse = nouvelle_adresse
+    db.commit()
+    db.refresh(client)
+    
+    # Création de la notification
+    notif = NotificationCreate(
+        user_id=client_id,
+        user_type="client",
+        titre="Adresse mise à jour",
+        message=f"Votre adresse a été modifiée avec succès en : {nouvelle_adresse}.",
+        type=TypeNotification.info
+    )
+    creer_notification(db, notif)
+    
+    return client
+

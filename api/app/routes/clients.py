@@ -7,7 +7,7 @@ from app.schemas.client import ClientCreate, ClientOut, ClientUpdate
 
 from app.schemas.commande import CommandeCreate, CommandeRead
 from app.services.client import (
-    creer_client, obtenir_client_par_id, lister_clients,
+    creer_client, mettre_a_jour_adresse_client, obtenir_client_par_id, lister_clients,
     modifier_client, supprimer_client
 )
 from app.core.database import get_db
@@ -57,3 +57,15 @@ def creer_commande(
     except Exception as e:
         print("ERREUR:", str(e))
         raise HTTPException(status_code=500, detail="Erreur lors de la création de la commande")
+    
+
+@router.patch("/{client_id}/adresse", response_model=ClientOut)
+def mettre_a_jour_adresse(
+    client_id: UUID,
+    nouvelle_adresse: str, # on attend {"nouvelle_adresse": "..."}
+    db: Session = Depends(get_db)
+):
+    client = mettre_a_jour_adresse_client(db, client_id, nouvelle_adresse)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client non trouvé")
+    return client
