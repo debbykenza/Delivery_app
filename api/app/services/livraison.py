@@ -53,18 +53,30 @@ class LivraisonService:
         livraison = db.query(Livraison).filter(Livraison.id == livraison_id).first()
         if not livraison:
             raise HTTPException(status_code=404, detail="Livraison introuvable")
+
+        # Vérifier si le livreur a déjà une livraison "en cours"
+        livraison_existante = db.query(Livraison).filter(
+            Livraison.livreur_id == livreur_id,
+            Livraison.statut == "en_cours"
+        ).first()
+
+        if livraison_existante:
+            raise HTTPException(
+                status_code=400,
+                detail="Vous avez déjà une livraison en cours. Terminez-la avant d'en accepter une nouvelle."
+            )
+
+        # Assigner la livraison
         livraison.livreur_id = livreur_id
         livraison.statut = "acceptee"
         db.commit()
         db.refresh(livraison)
-        
+
         #  Récupération du marchand via la commande
         commande = db.query(Commande).filter(Commande.id == livraison.commande_id).first()
         if not commande:
             raise HTTPException(status_code=404, detail="Commande introuvable")
-        
-        
-        
+
         #  Marchand
         notif_marchand = NotificationCreate(
             user_id=commande.marchand_id,
@@ -95,11 +107,12 @@ class LivraisonService:
         )
         creer_notification(db, notif_livreur)
 
-        #  Retour avec message personnalisé
+        # Retour
         return {
             "message": "Livraison acceptée avec succès.",
             "livraison": livraison
         }
+
 
     @staticmethod
     def terminer_livraison(db: Session, livraison_id: UUID):
